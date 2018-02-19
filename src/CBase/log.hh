@@ -1,8 +1,8 @@
 #ifndef CONCUSSION_LOG_HH
 #define CONCUSSION_LOG_HH
 
+#include <mutex>
 #include <ostream>
-#include <iostream>
 
 namespace concussion {
 
