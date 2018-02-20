@@ -88,7 +88,7 @@ Log& error_log();
     ::concussion::base::warn_log();  \
     ::concussion::base::error_log();
 
-#ifdef LOGGING_ENABLED
+#ifdef CNC_LOGGING_ENABLED
 #define CNC_DEBUG ::concussion::base::Stream( ::concussion::base::debug_log(), "DBG" ) << "[" << __FUNCTION__ << "] "
 #define CNC_INFO ::concussion::base::Stream( ::concussion::base::info_log(), "NFO" ) << "[" << __FUNCTION__ << "] "
 #define CNC_WARN ::concussion::base::Stream( ::concussion::base::warn_log(), "WRN" ) << "[" << __FUNCTION__ << "] "

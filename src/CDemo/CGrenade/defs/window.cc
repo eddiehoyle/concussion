@@ -3,9 +3,13 @@
 //
 
 #include "window.hh"
-#include <GLFW/glfw3.h>
+
 #include <GL/glew.h>
+#include <GLFW/glfw3.h>
+
 #include <CBase/log.hh>
+
+#include <sstream>
 
 namespace concussion {
 
@@ -13,7 +17,8 @@ static const int WIDTH = 640;
 static const int HEIGHT = 480;
 
 Window::Window()
-        : m_handle( nullptr ) {
+        : m_handle( nullptr ),
+          m_initialised( false ) {
 
     if ( !glfwInit() ) {
         CNC_ERROR << "glfw failed to initialise!";
@@ -34,75 +39,59 @@ Window::Window()
     glfwWindowHint( GLFW_RESIZABLE, GLFW_TRUE );
 
     // Set some defaults
+    glfwMakeContextCurrent( m_handle );
     glfwSwapInterval( 1 );
     glfwSetTime( 0.0 );
-    glfwMakeContextCurrent( m_handle );
-    glfwSetInputMode( m_handle, GLFW_CURSOR, GLFW_CURSOR_NORMAL );
 
     // Initialize GLEW
     glewExperimental = GL_TRUE;
-    if ( !glewInit() ) {
+    if ( glewInit() != GLEW_OK ) {
         CNC_ERROR << "Failed to initialize GLEW";
         glfwDestroyWindow( m_handle );
         return;
     }
+
+//    int width, height;
+//    glfwGetFramebufferSize( m_handle, &width, &height );
+//    CNC_ERROR << width << ", " << height;
+//    glfwSetWindowSize( m_handle, width/2, height/2 );
+//    glViewport( 0, 0, width, height );
+
+    // Good to go
+    m_initialised = true;
 }
 
-bool Window::is_open() {
-    return glfwWindowShouldClose( m_handle ) == GLFW_FALSE;
+bool Window::open() {
+    return m_initialised && !glfwWindowShouldClose( m_handle );
+}
+
+void Window::set_title( const std::string& title ) {
+    if ( m_initialised ) {
+        glfwSetWindowTitle( m_handle, title.c_str() );
+    }
 }
 
 void Window::update_begin() {
-    glfwPollEvents();
-}
-
-void Window::update( double elapsed ) {
-    glfwSetWindowTitle( m_handle, std::to_string( 1000.0/elapsed ).c_str() );
+    if ( m_initialised ) {
+        glfwPollEvents();
+    }
 }
 
 void Window::update_end() {
-    glfwSwapBuffers( m_handle );
-//}
-//
-//void Window::run() {
-//
-//    double time = glfwGetTime();
-//    double last_time = time;
-//    double frame_timer = 0.0;
-//
-//    while( !glfwWindowShouldClose( m_handle ) ) {
-//
-//        double time = glfwGetTime();
-//        double elapsed = time - last_time;
-//        last_time = time;
-//
-//        glfwPollEvents();
-//
-////        processEvents( deltaTime );
-////        update( deltaTime );
-////        render( deltaTime );
-//
-//        glfwSwapBuffers( m_handle );
-//
-//        ++m_frames;
-//        frame_timer += elapsed;
-//
-//        if( frame_timer > 1.0f ) {
-//            m_frames = 0;
-//            frame_timer = 0.0;
-//        }
-//    }
-//
-//}
-
-Window::~Window() {
-    glfwDestroyWindow( m_handle );
-    glfwTerminate();
+    if ( m_initialised ) {
+        glfwSwapBuffers( m_handle );
+    }
 }
 
-Window& window() {
-    static Window window;
-    return window;
+double Window::time() const {
+    return m_initialised ? glfwGetTime() : 0.0;
+}
+
+Window::~Window() {
+    if ( m_initialised ) {
+        glfwDestroyWindow( m_handle );
+        glfwTerminate();
+    }
 }
 
 }

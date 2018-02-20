@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 3.5)
 project(concussion)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-set(LOGGING_ENABLED true)
+set(CNC_LOGGING_ENABLED true)
+set(CNC_ASSERT_ENABLED true)
 
 set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
@@ -17,6 +18,11 @@ include_directories(
         ext/glm
         ext/stb
         ${INCLUDE_DIR})
+
+add_definitions(
+        -DCNC_LOGGING_ENABLED=${CNC_LOGGING_ENABLED}
+        -DCNC_ASSERT_ENABLED=${CNC_ASSERT_ENABLED}
+)
 
 add_subdirectory(${EXTERNAL_DIR})
 add_subdirectory(${SOURCE_DIR})

@@ -1,17 +1,20 @@
 #ifndef CONCUSSION_APPLICATION_HH
 #define CONCUSSION_APPLICATION_HH
 
+#include "window.hh"
+
+#include <memory>
+
 namespace concussion {
 
 class Application {
 
 public:
     Application();
-    ~Application();
+    ~Application() = default;
     void run();
 private:
-    void update( double elapsed );
-
+    std::unique_ptr< Window > m_window;
 };
 
 }
