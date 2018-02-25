@@ -3,13 +3,13 @@ set(TARGET_NAME ${DIR_NAME})
 set(TARGET_SOURCE_DIR defs)
 set(TARGET_INCLUDE_DIR .)
 
-file(GLOB PROJECT_SOURCES ${TARGET_SOURCE_DIR}/*.cc)
+file(GLOB PROJECT_SOURCES ${TARGET_SOURCE_DIR}/**/*.cc)
 file(GLOB PROJECT_HEADERS *.hh)
 file(GLOB PROJECT_CONFIGS CMakeLists.txt)
 
 add_library(${TARGET_NAME} SHARED
         ${PROJECT_SOURCES}
-        ${PROJECT_HEADERS} defs/io.cc io.hh)
+        ${PROJECT_HEADERS})
 target_include_directories(${TARGET_NAME} PRIVATE
         ${TARGET_INCLUDE_DIR})
 target_compile_definitions(${TARGET_NAME} PRIVATE
@@ -17,6 +17,8 @@ target_compile_definitions(${TARGET_NAME} PRIVATE
 target_link_libraries(${TARGET_NAME}
         ${OPENGL_LIBRARIES}
         ${GLEW_LIBRARIES}
-        glfw)
+        glfw
+        CBase)
+
 
 

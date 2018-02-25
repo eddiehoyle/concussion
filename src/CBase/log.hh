@@ -89,10 +89,10 @@ Log& error_log();
     ::concussion::base::error_log();
 
 #ifdef CNC_LOGGING_ENABLED
-#define CNC_DEBUG ::concussion::base::Stream( ::concussion::base::debug_log(), "DBG" ) << "[" << __FUNCTION__ << "] "
-#define CNC_INFO ::concussion::base::Stream( ::concussion::base::info_log(), "NFO" ) << "[" << __FUNCTION__ << "] "
-#define CNC_WARN ::concussion::base::Stream( ::concussion::base::warn_log(), "WRN" ) << "[" << __FUNCTION__ << "] "
-#define CNC_ERROR ::concussion::base::Stream( ::concussion::base::error_log(), "ERR" ) << "[" << __FUNCTION__ << "] "
+#define CNC_DEBUG ::concussion::base::Stream( ::concussion::base::debug_log(), "DBG" ) << "[" << __FUNCTION__ << "]: "
+#define CNC_INFO ::concussion::base::Stream( ::concussion::base::info_log(), "NFO" ) << "[" << __FUNCTION__ << "]: "
+#define CNC_WARN ::concussion::base::Stream( ::concussion::base::warn_log(), "WRN" ) << "[" << __FUNCTION__ << "]: "
+#define CNC_ERROR ::concussion::base::Stream( ::concussion::base::error_log(), "ERR" ) << "[" << __FUNCTION__ << "]: "
 #else
 #define CNC_DEBUG ::concussion::base::NullStream( ::concussion::base::debug_log(), "DBG" )
 #define CNC_INFO ::concussion::base::NullStream( ::concussion::base::info_log(), "NFO" )

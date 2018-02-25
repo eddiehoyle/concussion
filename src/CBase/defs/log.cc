@@ -1,4 +1,4 @@
-#include "../log.hh"
+#include "log.hh"
 
 #include <iostream>
 
@@ -15,7 +15,7 @@ Log::Log( std::ostream* stream, Level level )
 Stream::Stream( Log& log, const std::string& prefix )
     : m_log( log ) {
     m_log.m_mutex.lock();
-    *( m_log.m_stream ) << "[" << prefix << "] : ";
+    *( m_log.m_stream ) << "[" << prefix << "]: ";
 }
 
 Stream::~Stream() {
