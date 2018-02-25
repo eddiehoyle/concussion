@@ -21,7 +21,6 @@ void Application::run() {
         double start = m_window->time();
 
         m_window->update_begin();
-//        concussion::graphics::SimpleShader shader;
         m_window->update_end();
 
         elapsed = m_window->time() - start;

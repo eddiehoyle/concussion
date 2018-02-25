@@ -23,12 +23,13 @@ void validate_shader( GLuint shader ) {
 
     if  ( !result ) {
 
+        int len;
         GLint length;
         glGetShaderiv( shader, GL_INFO_LOG_LENGTH, &length );
 
-        GLchar error[length + 1];
+        GLchar* error = new GLchar[length + 1];
         glGetShaderInfoLog( shader, length, nullptr, error );
-        CNC_ERROR << error;
+        delete[] error;
     }
     CNC_ASSERT( result );
 }
@@ -85,27 +86,27 @@ SimpleShader::SimpleShader()
 
     m_vertex = compile( vertex_source, GL_VERTEX_SHADER );
     m_fragment = compile( fragment_source, GL_FRAGMENT_SHADER );
-//
-//    m_program = glCreateProgram();
-//    glAttachShader( m_program, m_vertex );
-//    glAttachShader( m_program, m_fragment );
-//
-//    glBindAttribLocation( m_program, 0, "vertex" );
-//
-//    glLinkProgram( m_program );
-//    validate_program( m_program );
-//
-//    GLuint model_matrix;
-//    initialise_uniform( "u_modelMatrix", &model_matrix );
-//    m_uniforms["u_modelMatrix"] = model_matrix;
-//
-//    GLuint view_matrix;
-//    initialise_uniform( "u_viewMatrix", &view_matrix );
-//    m_uniforms["u_viewMatrix"] = view_matrix;
-//
-//    GLuint projection_matrix;
-//    initialise_uniform( "u_projectionMatrix", &projection_matrix );
-//    m_uniforms["u_projectionMatrix"] = projection_matrix;
+
+    m_program = glCreateProgram();
+    glAttachShader( m_program, m_vertex );
+    glAttachShader( m_program, m_fragment );
+
+    glBindAttribLocation( m_program, 0, "i_position" );
+
+    glLinkProgram( m_program );
+    validate_program( m_program );
+
+    GLuint model_matrix;
+    initialise_uniform( "u_modelMatrix", &model_matrix );
+    m_uniforms["u_modelMatrix"] = model_matrix;
+
+    GLuint view_matrix;
+    initialise_uniform( "u_viewMatrix", &view_matrix );
+    m_uniforms["u_viewMatrix"] = view_matrix;
+
+    GLuint projection_matrix;
+    initialise_uniform( "u_projectionMatrix", &projection_matrix );
+    m_uniforms["u_projectionMatrix"] = projection_matrix;
 }
 
 SimpleShader::~SimpleShader() {
