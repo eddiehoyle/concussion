@@ -1,6 +1,7 @@
 #include <sstream>
 #include <CBase/log.hh>
 #include <CGraphics/shader.hh>
+#include <CGraphics/domain.hh>
 #include "application.hh"
 
 namespace concussion {
@@ -16,7 +17,9 @@ void Application::run() {
     double second = 0.0;
     double refresh_rate = 1.0;
 
-    concussion::graphics::SimpleShader shader;
+    using namespace concussion::graphics;
+    SimpleShaderPtr shader( new SimpleShader() );
+    ShaderDomain< SimpleShaderPtr > fn_shader( shader );
 
     while ( m_window->open() ) {
 

@@ -1,7 +1,3 @@
-//
-// Created by Eddie Hoyle on 19/02/18.
-//
-
 #include "window.hh"
 
 #include <GL/glew.h>
