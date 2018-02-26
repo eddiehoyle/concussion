@@ -1,6 +1,6 @@
 #include "shader.hh"
 
-#include <Cbase/io.hh>
+#include <CBase/io.hh>
 #include <CBase/log.hh>
 #include <CBase/assert.hh>
 #include <CBase/resource.hh>
@@ -29,13 +29,14 @@ void validate_shader( GLuint shader ) {
 
         GLchar* error = new GLchar[length + 1];
         glGetShaderInfoLog( shader, length, nullptr, error );
+        CNC_ERROR << error;
         delete[] error;
     }
     CNC_ASSERT( result );
 }
 
 
-bool validate_program( GLuint program ) {
+void validate_program( GLuint program ) {
 
     GLint result = GL_FALSE;
     glGetProgramiv( program, GL_LINK_STATUS, &result );
@@ -45,9 +46,10 @@ bool validate_program( GLuint program ) {
         GLint length;
         glGetProgramiv( program, GL_INFO_LOG_LENGTH, &length );
 
-        GLchar error[length + 1];
+        GLchar* error = new GLchar[length + 1];
         glGetProgramInfoLog( program, length, nullptr, error );
         CNC_ERROR << error;
+        delete[] error;
     }
     CNC_ASSERT( result );
 }

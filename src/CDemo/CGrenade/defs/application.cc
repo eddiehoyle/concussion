@@ -16,6 +16,8 @@ void Application::run() {
     double second = 0.0;
     double refresh_rate = 1.0;
 
+    concussion::graphics::SimpleShader shader;
+
     while ( m_window->open() ) {
 
         double start = m_window->time();

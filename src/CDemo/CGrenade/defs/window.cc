@@ -10,6 +10,7 @@
 #include <CBase/log.hh>
 
 #include <sstream>
+#include <CBase/assert.hh>
 
 namespace concussion {
 
@@ -25,18 +26,18 @@ Window::Window()
         return;
     }
 
+    glfwWindowHint( GLFW_SAMPLES, 4 );
+    glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 3 );
+    glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 3 );
+    glfwWindowHint( GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE ); // To make MacOS happy; should not be needed
+    glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
+    glfwWindowHint( GLFW_RESIZABLE, GLFW_TRUE );
+
     m_handle = glfwCreateWindow( WIDTH, HEIGHT, CNC_TARGET_NAME, nullptr, nullptr );
     if ( m_handle == nullptr ) {
         CNC_ERROR << "Failed to create glfw window.";
         return;
     }
-
-    glfwWindowHint( GLFW_SAMPLES, 4 );
-    glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 4 );
-    glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 1 );
-    glfwWindowHint( GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE ); // To make MacOS happy; should not be needed
-    glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
-    glfwWindowHint( GLFW_RESIZABLE, GLFW_TRUE );
 
     // Set some defaults
     glfwMakeContextCurrent( m_handle );
@@ -51,36 +52,28 @@ Window::Window()
         return;
     }
 
-//    int width, height;
-//    glfwGetFramebufferSize( m_handle, &width, &height );
-//    CNC_ERROR << width << ", " << height;
-//    glfwSetWindowSize( m_handle, width/2, height/2 );
-//    glViewport( 0, 0, width, height );
-
     // Good to go
     m_initialised = true;
 }
 
 bool Window::open() {
-    return m_initialised && !glfwWindowShouldClose( m_handle );
+    CNC_ASSERT( m_initialised );
+    return !glfwWindowShouldClose( m_handle );
 }
 
 void Window::set_title( const std::string& title ) {
-    if ( m_initialised ) {
-        glfwSetWindowTitle( m_handle, title.c_str() );
-    }
+    CNC_ASSERT( m_initialised );
+    glfwSetWindowTitle( m_handle, title.c_str() );
 }
 
 void Window::update_begin() {
-    if ( m_initialised ) {
-        glfwPollEvents();
-    }
+    CNC_ASSERT( m_initialised );
+    glfwPollEvents();
 }
 
 void Window::update_end() {
-    if ( m_initialised ) {
-        glfwSwapBuffers( m_handle );
-    }
+    CNC_ASSERT( m_initialised );
+    glfwSwapBuffers( m_handle );
 }
 
 double Window::time() const {
@@ -88,10 +81,9 @@ double Window::time() const {
 }
 
 Window::~Window() {
-    if ( m_initialised ) {
-        glfwDestroyWindow( m_handle );
-        glfwTerminate();
-    }
+    CNC_ASSERT( m_initialised );
+    glfwDestroyWindow( m_handle );
+    glfwTerminate();
 }
 
 }
