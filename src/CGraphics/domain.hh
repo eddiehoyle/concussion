@@ -7,20 +7,7 @@ namespace concussion {
 
 namespace graphics {
 
-typedef std::shared_ptr< SimpleShader > SimpleShaderPtr;
 
-template< typename ShaderT >
-class ShaderDomain {
-public:
-    ShaderDomain( ShaderT shader );
-    ~ShaderDomain() = default;
-
-    void bind();
-
-private:
-    ShaderT m_shader;
-
-};
 
 } // namespace graphics
 
