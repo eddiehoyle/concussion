@@ -23,7 +23,7 @@ public:
     ShaderManager& operator=( ShaderManager&& ) = delete;
     ~ShaderManager();
 
-    void add( const ShaderSource& source );
+    void compile( const ShaderSource& source );
     void bind( const char* name );
     void unbind();
 

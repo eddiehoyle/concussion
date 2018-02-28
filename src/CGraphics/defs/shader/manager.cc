@@ -94,16 +94,16 @@ ShaderManager::~ShaderManager() {
     delete s_instance;
 }
 
-void ShaderManager::add( const ShaderSource& source ) {
+void ShaderManager::compile( const ShaderSource& source ) {
 
     ShaderTargetPtr shader( new ShaderTarget );
 
     shader->name = source.name;
 
-    shader->vertex = compile( source.vertex, GL_VERTEX_SHADER );
+    shader->vertex = concussion::graphics::compile( source.vertex, GL_VERTEX_SHADER );
     validate_shader( shader->vertex );
 
-    shader->fragment = compile( source.fragment, GL_FRAGMENT_SHADER );
+    shader->fragment = concussion::graphics::compile( source.fragment, GL_FRAGMENT_SHADER );
     validate_shader( shader->fragment );
 
     shader->program = glCreateProgram();

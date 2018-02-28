@@ -33,7 +33,6 @@ void Application::run() {
     CNC_ASSERT( fragment_shader_exists );
     const std::string fragment_source = io::read_file( fragment_path );
 
-
     ShaderSource source;
     source.name = "simple";
     source.vertex = vertex_source.c_str();
@@ -41,7 +40,41 @@ void Application::run() {
     source.attributes = { "i_position" };
     source.uniforms = { "u_modelMatrix", "u_viewMatrix", "u_projectionMatrix" };
 
-    ShaderManager::instance()->add( source );
+    ShaderManager::instance()->compile( source );
+
+    GLfloat vertices[12] = {
+            -0.5f, 0.5f, 0.0f,
+            -0.5f, -0.5f, 0.0f,
+            0.5f, -0.5f, 0.0f,
+            0.5f, 0.5f, 0.0f
+    };
+    GLuint vertices_count = sizeof( vertices ) / sizeof( vertices[0] );
+    GLuint vertices_size = sizeof( GLfloat ) * vertices_count;
+
+    GLuint indices[6] = {
+            0, 1, 3,
+            3, 1, 2
+    };
+    GLuint indices_count = sizeof( indices ) / sizeof( indices[0] );
+    GLuint indices_size = sizeof( GLuint ) * indices_count;
+
+    GLuint vao;
+    glGenVertexArrays( 1, &vao );
+    glBindVertexArray( vao );
+
+    GLuint vbo;
+    glGenBuffers( 1, &vbo );
+    glBindBuffer( GL_ARRAY_BUFFER, vbo );
+    glBufferData( GL_ARRAY_BUFFER, vertices_size, &vertices[0], GL_STATIC_DRAW );
+    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, 0 );
+    glBindBuffer( GL_ARRAY_BUFFER, 0 );
+
+    GLuint ebo;
+    glGenBuffers( 1, &ebo );
+    glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ebo );
+    glBufferData( GL_ELEMENT_ARRAY_BUFFER, indices_size, &indices[0], GL_STATIC_DRAW );
+
+    glBindVertexArray( 0 );
 
     while ( m_window->open() ) {
 
@@ -50,6 +83,13 @@ void Application::run() {
         m_window->update_begin();
 
         ShaderManager::instance()->bind( "simple" );
+
+        glBindVertexArray( vao );
+        glEnableVertexAttribArray( 0 );
+        glDrawElements( GL_TRIANGLES, vertices_count, GL_UNSIGNED_INT, 0 );
+        glDisableVertexAttribArray( 0 );
+        glBindVertexArray( 0 );
+
         ShaderManager::instance()->unbind();
 
         m_window->update_end();
