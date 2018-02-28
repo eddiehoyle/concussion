@@ -1,12 +1,12 @@
 #ifndef CONCUSSION_MANAGER_HH
 #define CONCUSSION_MANAGER_HH
 
-#include <map>
-#include <vector>
+#include "shader.hh"
 
 #include <GL/glew.h>
 
-#include "shader.hh"
+#include <map>
+#include <vector>
 
 namespace concussion {
 
@@ -24,8 +24,6 @@ public:
     ~ShaderManager();
 
     void add( const ShaderSource& source );
-    void remove( const char* name );
-
     void bind( const char* name );
     void unbind();
 

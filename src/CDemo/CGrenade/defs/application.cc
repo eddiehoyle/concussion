@@ -48,6 +48,10 @@ void Application::run() {
         double start = m_window->time();
 
         m_window->update_begin();
+
+        ShaderManager::instance()->bind( "simple" );
+        ShaderManager::instance()->unbind();
+
         m_window->update_end();
 
         elapsed = m_window->time() - start;

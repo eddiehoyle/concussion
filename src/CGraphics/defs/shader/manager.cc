@@ -7,7 +7,6 @@ namespace concussion {
 
 namespace graphics {
 
-
 void validate_shader( GLuint shader ) {
 
     GLint result = GL_FALSE;
@@ -24,9 +23,8 @@ void validate_shader( GLuint shader ) {
         CNC_ERROR << error;
         delete[] error;
     }
-    CNC_ASSERT( result );
+    CNC_ASSERT( result == GL_TRUE  );
 }
-
 
 void validate_program( GLuint program ) {
 
@@ -43,14 +41,13 @@ void validate_program( GLuint program ) {
         CNC_ERROR << error;
         delete[] error;
     }
-    CNC_ASSERT( result );
+    CNC_ASSERT( result == GL_TRUE );
 }
 
 
-GLuint compile( const std::string& source, GLenum type ) {
+GLuint compile( const char* source, GLenum type ) {
     GLuint id = glCreateShader( type );
-    const char* c_source = source.c_str();
-    glShaderSource( id, 1, &c_source, nullptr );
+    glShaderSource( id, 1, &source, nullptr );
     glCompileShader( id );
     return id;
 }
@@ -101,6 +98,8 @@ void ShaderManager::add( const ShaderSource& source ) {
 
     ShaderTargetPtr shader( new ShaderTarget );
 
+    shader->name = source.name;
+
     shader->vertex = compile( source.vertex, GL_VERTEX_SHADER );
     validate_shader( shader->vertex );
 
@@ -125,16 +124,14 @@ void ShaderManager::add( const ShaderSource& source ) {
     m_shaders[ source.name ] = std::move( shader );
 }
 
-void ShaderManager::remove( const char *name ) {
-
-}
-
-void ShaderManager::bind( const char *name ) {
-
+void ShaderManager::bind( const char* name ) {
+    auto iter = m_shaders.find( name );
+    CNC_ASSERT( iter != m_shaders.end() );
+    glUseProgram( iter->second->program );
 }
 
 void ShaderManager::unbind() {
-
+    glUseProgram( 0 );
 }
 
 
