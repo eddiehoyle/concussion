@@ -1,11 +1,12 @@
 #include <sstream>
 #include <CBase/log.hh>
 #include <CGraphics/shader.hh>
-#include <CGraphics/domain.hh>
 #include <CBase/resource.hh>
 #include <CBase/io.hh>
 #include <CBase/assert.hh>
 #include <CGraphics/manager.hh>
+#include <CGraphics/mesh.hh>
+#include <cmath>
 #include "application.hh"
 
 namespace concussion {
@@ -13,6 +14,56 @@ namespace concussion {
 Application::Application()
         : m_window( nullptr ) {
     m_window = std::unique_ptr< Window >( new Window() );
+}
+
+void circle( std::vector< GLfloat >& vertices,
+             std::vector< GLuint >& indices ) {
+
+    int sides = 5;
+    vertices.push_back( 0.0f );
+    vertices.push_back( 0.0f );
+    vertices.push_back( 0.0f );
+
+    vertices.push_back( std::cos(1 * ((2.0f * 3.14159f) / sides)) );
+    vertices.push_back( std::sin(1 * ((2.0f * 3.14159f) / sides)) );
+    vertices.push_back( 0.0f );
+
+    vertices.push_back( std::cos(2 * ((2.0f * 3.14159f) / sides)) );
+    vertices.push_back( std::sin(2 * ((2.0f * 3.14159f) / sides)) );
+    vertices.push_back( 0.0f );
+
+    vertices.push_back( std::cos(3 * ((2.0f * 3.14159f) / sides)) );
+    vertices.push_back( std::sin(3 * ((2.0f * 3.14159f) / sides)) );
+    vertices.push_back( 0.0f );
+
+    vertices.push_back( std::cos(4 * ((2.0f * 3.14159f) / sides)) );
+    vertices.push_back( std::sin(4 * ((2.0f * 3.14159f) / sides)) );
+    vertices.push_back( 0.0f );
+
+    vertices.push_back( std::cos(5 * ((2.0f * 3.14159f) / sides)) );
+    vertices.push_back( std::sin(5 * ((2.0f * 3.14159f) / sides)) );
+    vertices.push_back( 0.0f );
+
+    indices.push_back( 0 );
+    indices.push_back( 1 );
+    indices.push_back( 2 );
+
+    indices.push_back( 0 );
+    indices.push_back( 2 );
+    indices.push_back( 3 );
+
+    indices.push_back( 0 );
+    indices.push_back( 3 );
+    indices.push_back( 4 );
+
+    indices.push_back( 0 );
+    indices.push_back( 4 );
+    indices.push_back( 5 );
+
+    indices.push_back( 0 );
+    indices.push_back( 5 );
+    indices.push_back( 1 );
+
 }
 
 void Application::run() {
@@ -42,39 +93,38 @@ void Application::run() {
 
     ShaderManager::instance()->compile( source );
 
-    GLfloat vertices[12] = {
-            -0.5f, 0.5f, 0.0f,
-            -0.5f, -0.5f, 0.0f,
-            0.5f, -0.5f, 0.0f,
-            0.5f, 0.5f, 0.0f
-    };
+    std::vector< GLfloat > _vertices;
+    std::vector< GLuint > _indices;
+    circle( _vertices, _indices );
+
+    GLfloat vertices[_vertices.size()];
+    for ( std::size_t i = 0; i < _vertices.size(); ++i ) {
+        vertices[i] = _vertices[i];
+    }
+
+    GLuint indices[_indices.size()];
+    for ( std::size_t i = 0; i < _indices.size(); ++i ) {
+        indices[i] = _indices[i];
+    }
+
+//    GLfloat vertices[12] = {
+//            -0.5f, 0.5f, 0.0f,
+//            -0.5f, -0.5f, 0.0f,
+//            0.5f, -0.5f, 0.0f,
+//            0.5f, 0.5f, 0.0f
+//    };
     GLuint vertices_count = sizeof( vertices ) / sizeof( vertices[0] );
     GLuint vertices_size = sizeof( GLfloat ) * vertices_count;
 
-    GLuint indices[6] = {
-            0, 1, 3,
-            3, 1, 2
-    };
+//    GLuint indices[6] = {
+//            0, 1, 3,
+//            3, 1, 2
+//    };
     GLuint indices_count = sizeof( indices ) / sizeof( indices[0] );
     GLuint indices_size = sizeof( GLuint ) * indices_count;
 
-    GLuint vao;
-    glGenVertexArrays( 1, &vao );
-    glBindVertexArray( vao );
-
-    GLuint vbo;
-    glGenBuffers( 1, &vbo );
-    glBindBuffer( GL_ARRAY_BUFFER, vbo );
-    glBufferData( GL_ARRAY_BUFFER, vertices_size, &vertices[0], GL_STATIC_DRAW );
-    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, 0 );
-    glBindBuffer( GL_ARRAY_BUFFER, 0 );
-
-    GLuint ebo;
-    glGenBuffers( 1, &ebo );
-    glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, ebo );
-    glBufferData( GL_ELEMENT_ARRAY_BUFFER, indices_size, &indices[0], GL_STATIC_DRAW );
-
-    glBindVertexArray( 0 );
+    Mesh mesh;
+    mesh.vao = buffer( vertices, vertices_count, indices, indices_count );
 
     while ( m_window->open() ) {
 
@@ -84,7 +134,7 @@ void Application::run() {
 
         ShaderManager::instance()->bind( "simple" );
 
-        glBindVertexArray( vao );
+        glBindVertexArray( mesh.vao );
         glEnableVertexAttribArray( 0 );
         glDrawElements( GL_TRIANGLES, vertices_count, GL_UNSIGNED_INT, 0 );
         glDisableVertexAttribArray( 0 );
