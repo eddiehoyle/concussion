@@ -32,8 +32,19 @@ void square( float size,
              std::vector< GLfloat >& o_vertices,
              std::vector< GLuint >& o_indices );
 
-//GLuint buffer( GLfloat vertices[], GLsizei vertex_count, GLuint indices[], GLsizei index_count );
-GLuint buffer( const std::vector< GLfloat >& vertices, const std::vector< GLuint >& indices );
+
+GLuint buffer( const std::vector< GLfloat >& vertices,
+               const std::vector< GLuint >& indices,
+               GLuint index );
+
+GLuint create_vao();
+void bind_vao( GLuint vao );
+void buffer_indices( const std::vector< GLuint >& indices );
+void buffer_data( GLuint index,
+                  GLsizei coordinates,
+                  GLenum type,
+                  const std::vector< GLfloat >& data );
+void unbind_vao();
 
 struct Mesh {
     GLuint vao;

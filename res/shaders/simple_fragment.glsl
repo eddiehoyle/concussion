@@ -1,9 +1,15 @@
 #version 400 core
 
-out vec4 o_color;
+in vec2 t_uv;
+in vec3 t_color;
+
+out vec4 o_fragment;
+
+uniform sampler2D sampler;
 
 void main() {
-    o_color = vec4( 1.0, 1.0, 1.0, 1.0 );
+    vec2 temp = t_uv;
+    o_fragment = vec4( t_color, 1.0 );
 }
 
 

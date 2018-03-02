@@ -7,6 +7,7 @@
 
 #include <map>
 #include <vector>
+#include <glm/detail/type_mat.hpp>
 
 namespace concussion {
 
@@ -27,12 +28,15 @@ public:
     void bind( const char* name );
     void unbind();
 
+    void load( const char* uniform, const glm::mat4& matrix );
 
 private:
     ShaderManager() = default;
     static ShaderManager* s_instance;
 
     std::map< const char*, ShaderTargetPtr > m_shaders;
+
+    ShaderTargetPtr m_active;
 };
 
 } // namespace graphics

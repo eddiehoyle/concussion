@@ -19,7 +19,7 @@ typedef std::map< const char*, GLuint > AttributeMap;
 typedef std::map< const char*, GLuint > UniformMap;
 typedef std::vector< const char* > Attributes;
 typedef std::vector< const char* > Uniforms;
-typedef std::unique_ptr< ShaderTarget > ShaderTargetPtr;
+typedef std::shared_ptr< ShaderTarget > ShaderTargetPtr;
 
 struct ShaderSource {
     const char* name;

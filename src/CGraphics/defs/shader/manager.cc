@@ -3,6 +3,9 @@
 
 #include "manager.hh"
 
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 namespace concussion {
 
 namespace graphics {
@@ -127,13 +130,21 @@ void ShaderManager::compile( const ShaderSource& source ) {
 void ShaderManager::bind( const char* name ) {
     auto iter = m_shaders.find( name );
     CNC_ASSERT( iter != m_shaders.end() );
-    glUseProgram( iter->second->program );
+    m_active = iter->second;
+    glUseProgram( m_active->program );
 }
 
 void ShaderManager::unbind() {
     glUseProgram( 0 );
+    m_active = nullptr;
 }
 
+void ShaderManager::load( const char* uniform, const glm::mat4& matrix ) {
+    CNC_ASSERT( m_active != nullptr );
+    auto iter = m_active->uniforms.find( uniform );
+    CNC_ASSERT( iter != m_active->uniforms.end() );
+    glUniformMatrix4fv( iter->second, 1, false, glm::value_ptr( matrix ) );
+}
 
 } // namespace graphics
 
