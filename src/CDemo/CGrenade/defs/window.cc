@@ -65,7 +65,8 @@ void Window::set_title( const std::string& title ) {
 void Window::update_begin() {
     CNC_ASSERT( m_initialised );
     glfwPollEvents();
-    glClear( GL_COLOR_BUFFER_BIT );
+    glEnable( GL_DEPTH_TEST );
+    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     glClearColor( 1, 0.5, 0, 1 );
 }
 

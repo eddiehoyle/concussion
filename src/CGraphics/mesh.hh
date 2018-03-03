@@ -32,23 +32,19 @@ void square( float size,
              std::vector< GLfloat >& o_vertices,
              std::vector< GLuint >& o_indices );
 
+class Shape {
 
-GLuint buffer( const std::vector< GLfloat >& vertices,
-               const std::vector< GLuint >& indices,
-               GLuint index );
+public:
+    explicit Shape( GLuint vao );
+    void bind();
+    void unbind();
 
-GLuint create_vao();
-void bind_vao( GLuint vao );
-void buffer_indices( const std::vector< GLuint >& indices );
-void buffer_data( GLuint index,
-                  GLsizei coordinates,
-                  GLenum type,
-                  const std::vector< GLfloat >& data );
-void unbind_vao();
-
-struct Mesh {
-    GLuint vao;
+private:
+    GLuint m_vao;
+    std::vector< GLuint > m_attributes;
 };
+
+typedef std::shared_ptr< Shape > ShapePtr;
 
 } // namespace graphics
 

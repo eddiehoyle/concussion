@@ -5,6 +5,7 @@
 #include <CBase/io.hh>
 #include <CBase/assert.hh>
 #include <CGraphics/manager.hh>
+#include <CGraphics/buffer.hh>
 #include <CGraphics/mesh.hh>
 #include <cmath>
 
@@ -53,9 +54,9 @@ void Application::run() {
     std::vector< GLfloat > uvs;
     circle( 0.5f, 32, vertices, indices );
 
-    Mesh mesh;
-    mesh.vao = create_vao();
-    bind_vao( mesh.vao );
+    GLuint vao;
+    vao = create_vao();
+    bind_vao( vao );
     buffer_indices( indices );
     buffer_data( 0, 3, GL_FLOAT, vertices );
     buffer_data( 1, 2, GL_FLOAT, uvs );
@@ -82,7 +83,7 @@ void Application::run() {
         glm::mat4 model = glm::translate( glm::mat4( 1 ), glm::vec3( std::sin( value ), std::cos( value ), 0.0f ) );
         ShaderManager::instance()->load( "u_modelMatrix", model );
 
-        glBindVertexArray( mesh.vao );
+        glBindVertexArray( vao );
         glEnableVertexAttribArray( 0 );
         glDrawElements( GL_TRIANGLES, vertices.size(), GL_UNSIGNED_INT, 0 );
         glDisableVertexAttribArray( 0 );

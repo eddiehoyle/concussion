@@ -48,60 +48,7 @@ void square( float size,
     };
 }
 
-void buffer_vertices( const std::vector< GLfloat >& vertices ) {
-    GLuint vbo;
-    glGenBuffers( 1, &vbo );
-    glBindBuffer( GL_ARRAY_BUFFER, vbo );
-    glBufferData( GL_ARRAY_BUFFER, sizeof( GLfloat ) * vertices.size(), &vertices[0], GL_STATIC_DRAW );
-    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 0, 0 );
-    glBindBuffer( GL_ARRAY_BUFFER, 0 );
-}
 
-void buffer_indices( const std::vector< GLuint >& indices ) {
-    GLuint vbo;
-    glGenBuffers( 1, &vbo );
-    glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, vbo );
-    glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof( GLuint ) * indices.size(), &indices[0], GL_STATIC_DRAW );
-}
-
-GLuint create_vao() {
-    GLuint vao;
-    glGenVertexArrays( 1, &vao );
-    return vao;
-}
-
-void bind_vao( GLuint vao ) {
-    glBindVertexArray( vao );
-}
-
-void buffer_data( GLuint index, GLsizei coordinates, GLenum type, const std::vector< GLfloat >& data ) {
-    GLuint vbo;
-    glGenBuffers( 1, &vbo );
-    glBindBuffer( GL_ARRAY_BUFFER, vbo );
-    glBufferData( GL_ARRAY_BUFFER, sizeof( GLfloat ) * data.size(), &data[0], GL_STATIC_DRAW );
-    glVertexAttribPointer( index, coordinates, type, GL_FALSE, 0, 0 );
-    glBindBuffer( GL_ARRAY_BUFFER, 0 );
-}
-
-void unbind_vao() {
-    glBindVertexArray( 0 );
-}
-
-GLuint buffer( const std::vector< GLfloat >& vertices,
-               const std::vector< GLuint >& indices,
-               GLuint index ) {
-
-    GLuint vao;
-    glGenVertexArrays( 1, &vao );
-    glBindVertexArray( vao );
-
-    buffer_vertices( vertices );
-    buffer_indices( indices );
-
-    glBindVertexArray( index );
-
-    return vao;
-}
 
 } // namespace graphics
 
