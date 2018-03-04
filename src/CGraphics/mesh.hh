@@ -21,7 +21,8 @@ namespace graphics {
 void circle( float radius,
              unsigned int subdivisions,
              std::vector< GLfloat >& o_vertices,
-             std::vector< GLuint >& o_indices );
+             std::vector< GLuint >& o_indices,
+             std::vector< GLfloat >& o_uvs );
 
 /// Generate a 2D square.
 /// The origin point is the center of the square.
@@ -30,7 +31,8 @@ void circle( float radius,
 /// @param[out] o_indices The square indices.
 void square( float size,
              std::vector< GLfloat >& o_vertices,
-             std::vector< GLuint >& o_indices );
+             std::vector< GLuint >& o_indices,
+             std::vector< GLfloat >& o_uvs );
 
 class Shape {
 

@@ -21,12 +21,12 @@ void buffer_indices( const std::vector< GLuint >& indices ) {
     glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof( GLuint ) * indices.size(), &indices[0], GL_STATIC_DRAW );
 }
 
-void buffer_data( GLuint index, GLsizei coordinates, GLenum type, const std::vector< GLfloat >& data ) {
+void buffer_data( GLuint index, GLsizei coordinates, const std::vector< GLfloat >& data ) {
     GLuint vbo;
     glGenBuffers( 1, &vbo );
     glBindBuffer( GL_ARRAY_BUFFER, vbo );
     glBufferData( GL_ARRAY_BUFFER, sizeof( GLfloat ) * data.size(), &data[0], GL_STATIC_DRAW );
-    glVertexAttribPointer( index, coordinates, type, GL_FALSE, 0, 0 );
+    glVertexAttribPointer( index, coordinates, GL_FLOAT, GL_FALSE, 0, 0 );
     glBindBuffer( GL_ARRAY_BUFFER, 0 );
 }
 

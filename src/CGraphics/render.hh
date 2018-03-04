@@ -10,12 +10,12 @@ namespace concussion {
 
 namespace graphics {
 
-class Render {
+//class Render {
 
-public:
-    Render();
-    void draw( const std::vector< ShapePtr >& shapes );
-};
+//public:
+//    Render();
+//    void draw( const std::vector< ShapePtr >& shapes );
+//};
 
 } // namespace graphics
 

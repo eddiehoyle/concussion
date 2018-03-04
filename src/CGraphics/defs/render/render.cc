@@ -5,17 +5,13 @@ namespace concussion {
 
 namespace graphics {
 
-void Render::draw( const std::vector< ShapePtr >& shapes ) {
-
-
-    for ( const ShapePtr& shape : shapes ) {
-        shape->bind();
-
-        shape->unbind();
-    }
-
-    ShaderManager::instance()->bind( "simple" );
-}
+//void Render::draw( const std::vector< ShapePtr >& shapes ) {
+//    for ( const ShapePtr& shape : shapes ) {
+//        shape->bind();
+//        shape->unbind();
+//    }
+//    ShaderManager::instance()->bind( "simple" );
+//}
 
 
 } // namespace graphics

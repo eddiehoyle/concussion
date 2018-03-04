@@ -1,4 +1,5 @@
-#include <sstream>
+#include "application.hh"
+
 #include <CBase/log.hh>
 #include <CGraphics/shader.hh>
 #include <CBase/resource.hh>
@@ -7,12 +8,13 @@
 #include <CGraphics/manager.hh>
 #include <CGraphics/buffer.hh>
 #include <CGraphics/mesh.hh>
-#include <cmath>
-
-#include "application.hh"
 
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
+
+#include <cmath>
+#include <sstream>
+#include <CBase/input/manager.hh>
 
 namespace concussion {
 
@@ -52,32 +54,35 @@ void Application::run() {
     std::vector< GLuint > indices;
     std::vector< GLfloat > vertices;
     std::vector< GLfloat > uvs;
-    circle( 0.5f, 32, vertices, indices );
+    circle( 0.5f, 32, vertices, indices, uvs );
 
+    // Buffer mesh
     GLuint vao;
     vao = create_vao();
     bind_vao( vao );
     buffer_indices( indices );
-    buffer_data( 0, 3, GL_FLOAT, vertices );
-    buffer_data( 1, 2, GL_FLOAT, uvs );
+    buffer_data( 0, 3, vertices );
+    buffer_data( 1, 2, uvs );
     unbind_vao();
+
+    // Define some uniforms
+    glm::mat4 projection = glm::perspectiveFov( 70.0f, 640.0f, 480.0f, 0.01f, 1000.0f );
+    glm::mat4 view = glm::translate( glm::mat4( 1 ), glm::vec3( 0.0f, 0.0f, -3.0f ) );
 
     double value = 0.0;
 
     while ( m_window->open() ) {
 
-        value += 0.03;
-
-        double start = m_window->time();
-
         m_window->update_begin();
 
+//        const glm::vec2& pos = InputManager::instance()->mouse()->get_position();
+//        CNC_ERROR << "pos=" << glm::to_string( pos );
+
+        value += 0.03;
+        double start = m_window->time();
+
         ShaderManager::instance()->bind( "simple" );
-
-        glm::mat4 projection = glm::perspectiveFov( 70.0f, 640.0f, 480.0f, 0.01f, 1000.0f );
         ShaderManager::instance()->load( "u_projectionMatrix", projection );
-
-        glm::mat4 view = glm::translate( glm::mat4( 1 ), glm::vec3( 0.0f, 0.0f, -3.0f ) );
         ShaderManager::instance()->load( "u_viewMatrix", view );
 
         glm::mat4 model = glm::translate( glm::mat4( 1 ), glm::vec3( std::sin( value ), std::cos( value ), 0.0f ) );
@@ -85,8 +90,10 @@ void Application::run() {
 
         glBindVertexArray( vao );
         glEnableVertexAttribArray( 0 );
+        glEnableVertexAttribArray( 1 );
         glDrawElements( GL_TRIANGLES, vertices.size(), GL_UNSIGNED_INT, 0 );
         glDisableVertexAttribArray( 0 );
+        glDisableVertexAttribArray( 1 );
         glBindVertexArray( 0 );
 
         ShaderManager::instance()->unbind();

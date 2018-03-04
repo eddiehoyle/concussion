@@ -9,11 +9,13 @@ namespace graphics {
 void circle( float radius,
              unsigned int subdivisions,
              std::vector< GLfloat >& o_vertices,
-             std::vector< GLuint >& o_indices ) {
+             std::vector< GLuint >& o_indices,
+             std::vector< GLfloat >& o_uvs ) {
     CNC_ASSERT( subdivisions >= 3 );
     CNC_ASSERT( radius > 0.0f );
     o_vertices.resize( subdivisions * 3 + 3 );
     o_indices.resize( subdivisions * 3 + 3 );
+    o_uvs.resize( subdivisions * 2 + 2 );
     for ( unsigned int i = 0; i <= subdivisions; ++i ) {
         o_vertices[ 3 * i ] = std::cos( i * ( ( 2.0f * 3.14159f ) / subdivisions ) ) * radius;
         o_vertices[ 3 * i + 1 ] = std::sin( i * ( ( 2.0f * 3.14159f ) / subdivisions ) ) * radius;
@@ -21,6 +23,8 @@ void circle( float radius,
         o_indices[ 3 * i ] = 0;
         o_indices[ 3 * i + 1 ] = static_cast< GLuint >( i );
         o_indices[ 3 * i + 2 ] = static_cast< GLuint >( i +1 );
+        o_uvs[ 2 * i ] = 0.0f;
+        o_uvs[ 2 * i + 1 ] = 0.0f;
     }
 }
 
