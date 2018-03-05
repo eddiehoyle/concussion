@@ -1,4 +1,5 @@
 #include "application.hh"
+#include "window.hh"
 
 #include <CBase/log.hh>
 #include <CGraphics/shader.hh>
@@ -8,13 +9,13 @@
 #include <CGraphics/manager.hh>
 #include <CGraphics/buffer.hh>
 #include <CGraphics/mesh.hh>
+#include <CBase/input.hh>
 
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
 #include <cmath>
 #include <sstream>
-#include <CBase/input/manager.hh>
 
 namespace concussion {
 
@@ -69,23 +70,42 @@ void Application::run() {
     glm::mat4 projection = glm::perspectiveFov( 70.0f, 640.0f, 480.0f, 0.01f, 1000.0f );
     glm::mat4 view = glm::translate( glm::mat4( 1 ), glm::vec3( 0.0f, 0.0f, -3.0f ) );
 
+    Update update;
+    bool tap = false;
+
     double value = 0.0;
+
+    glm::mat4 model = glm::translate( glm::mat4( 1 ), glm::vec3( 1, 0, 0 ) );
 
     while ( m_window->open() ) {
 
-        m_window->update_begin();
+        m_window->update_begin( &update );
 
-//        const glm::vec2& pos = InputManager::instance()->mouse()->get_position();
-//        CNC_ERROR << "pos=" << glm::to_string( pos );
+        if ( update.pressed ) {
+            CNC_ERROR << "click=("
+                      << update.position.x << ", "
+                      << update.position.y << ")";
 
-        value += 0.03;
-        double start = m_window->time();
+
+
+            glm::vec2 device;
+            m_window->to_device_coords( update.position.x, update.position.y,
+                                        device.x, device.y );
+            glm::mat4 inv_projection = glm::inverse( projection );
+            glm::vec4 eye = inv_projection * glm::vec4( device.x, device.y, -1.0f, 1.0f );
+            glm::mat4 inv_view = glm::inverse( view );
+            glm::vec4 ray = inv_view * eye;
+            glm::vec3 n_ray = glm::normalize( glm::vec3( ray.x, ray.y, ray.z ) );
+            model = glm::translate( glm::mat4( 1 ), glm::vec3( ray.x, ray.y, 0.0 ) );
+            CNC_ERROR << model[3][0] << ", " << model[3][1];
+        }
+        tap = update.pressed;
+
+        update.time = m_window->time();
 
         ShaderManager::instance()->bind( "simple" );
         ShaderManager::instance()->load( "u_projectionMatrix", projection );
         ShaderManager::instance()->load( "u_viewMatrix", view );
-
-        glm::mat4 model = glm::translate( glm::mat4( 1 ), glm::vec3( std::sin( value ), std::cos( value ), 0.0f ) );
         ShaderManager::instance()->load( "u_modelMatrix", model );
 
         glBindVertexArray( vao );
@@ -98,9 +118,7 @@ void Application::run() {
 
         ShaderManager::instance()->unbind();
 
-        m_window->update_end();
-
-        elapsed = m_window->time() - start;
+        elapsed = m_window->time() - update.time;
         if ( ( second += elapsed ) > refresh_rate ) {
             std::stringstream ss;
             ss << "FPS: ";
@@ -108,6 +126,8 @@ void Application::run() {
             m_window->set_title( ss.str() );
             second = 0.0;
         }
+        m_window->update_end();
+
     }
 }
 

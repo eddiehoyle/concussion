@@ -10,21 +10,23 @@ class GLFWwindow;
 
 namespace concussion {
 
+struct Update;
+
 class Window {
 public:
     Window();
-
     ~Window();
-
     void set_title( const std::string& title );
-
     bool open() const;
-
-    void update_begin();
-
+    void update_begin( Update* update );
     void update_end();
-
     double time() const;
+    void request_quit();
+
+    int width() const;
+    int height() const;
+
+    void to_device_coords( int x, int y, float& o_x, float& o_y ) const;
 
 private:
     bool m_initialised;

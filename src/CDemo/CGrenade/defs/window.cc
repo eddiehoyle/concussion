@@ -4,53 +4,17 @@
 #include <GLFW/glfw3.h>
 
 #include <CBase/log.hh>
-
 #include <sstream>
 #include <CBase/assert.hh>
-#include <CBase/input/manager.hh>
+#include <CBase/input.hh>
 
 namespace concussion {
 
 static const int WIDTH = 640;
 static const int HEIGHT = 480;
 
-void keyboard_callback( GLFWwindow *window, int key, int scancode, int type, int mods ) {
-    if ( key == GLFW_KEY_ESCAPE && type == GLFW_PRESS ) {
-        glfwSetWindowShouldClose( window, GLFW_TRUE );
-        return;
-    }
-    CNC_ERROR << key;
-}
-
-
-void mouse_button_callback( GLFWwindow* window, int button, int type, int mods ) {
-
-    InputState state = InputState::None;
-    switch ( type ) {
-        case GLFW_PRESS:
-            state = InputState::Press;
-            break;
-        case GLFW_RELEASE:
-            state = InputState::Release;
-            break;
-    }
-
-    CNC_ASSERT( state != InputState::None );
-
-//    InputAction action = InputAction::None;
-//    switch ( button ) {
-//        case GLFW_MOUSE_BUTTON_LEFT:
-//            action = InputAction::LMB;
-//            break;
-//        case GLFW_MOUSE_BUTTON_RIGHT:
-//            action = InputAction::RMB;
-//            break;
-//    }
-//
-//
-//    if ( action != InputAction::None && state != InputState::None ) {
-//        InputManager::instance()->add( new InputCommand( action, state ) );
-//    }
+float clamp( float n, float lower, float upper ) {
+    return std::max(lower, std::min(n, upper));
 }
 
 Window::Window()
@@ -80,9 +44,6 @@ Window::Window()
     glfwSwapInterval( 1 );
     glfwSetTime( 0.0 );
 
-    glfwSetKeyCallback( m_handle, keyboard_callback );
-    glfwSetMouseButtonCallback( m_handle, mouse_button_callback );
-
     // Initialize GLEW
     glewExperimental = GL_TRUE;
     if ( glewInit() != GLEW_OK ) {
@@ -105,8 +66,9 @@ void Window::set_title( const std::string& title ) {
     glfwSetWindowTitle( m_handle, title.c_str() );
 }
 
-void Window::update_begin() {
+void Window::update_begin( Update* input ) {
     CNC_ASSERT( m_initialised );
+    CNC_ASSERT( input != nullptr );
 
     glEnable( GL_DEPTH_TEST );
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
@@ -114,9 +76,15 @@ void Window::update_begin() {
 
     glfwPollEvents();
 
+    if ( glfwGetKey( m_handle, GLFW_KEY_ESCAPE ) == GLFW_TRUE ) {
+        request_quit();
+        return;
+    };
+
     double x, y;
     glfwGetCursorPos( m_handle, &x, &y );
-    InputManager::instance()->mouse()->update( x, y );
+    input->position = glm::vec2( x, y );
+    input->pressed = glfwGetMouseButton( m_handle, GLFW_MOUSE_BUTTON_1 ) == GLFW_PRESS;
 }
 
 void Window::update_end() {
@@ -126,6 +94,27 @@ void Window::update_end() {
 
 double Window::time() const {
     return m_initialised ? glfwGetTime() : 0.0;
+}
+
+void Window::request_quit() {
+    glfwSetWindowShouldClose( m_handle, GLFW_TRUE );
+}
+
+int Window::width() const {
+    int width, height;
+    glfwGetWindowSize( m_handle, &width, &height );
+    return width;
+}
+
+int Window::height() const {
+    int width, height;
+    glfwGetWindowSize( m_handle, &width, &height );
+    return height;
+}
+
+void Window::to_device_coords( int i_x, int i_y, float& o_x, float& o_y ) const {
+    o_x = clamp( ( 2.0f * i_x ) / width() - 1, -1, 1 );
+    o_y = clamp( -( 2.0f * i_y ) / height() - 1, -1, 1 );
 }
 
 Window::~Window() {
