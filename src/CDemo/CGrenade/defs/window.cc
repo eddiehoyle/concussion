@@ -114,7 +114,7 @@ int Window::height() const {
 
 void Window::to_device_coords( int i_x, int i_y, float& o_x, float& o_y ) const {
     o_x = clamp( ( 2.0f * i_x ) / width() - 1, -1, 1 );
-    o_y = clamp( -( 2.0f * i_y ) / height() - 1, -1, 1 );
+    o_y = -clamp( ( 2.0f * i_y ) / height() - 1, -1, 1 );
 }
 
 Window::~Window() {

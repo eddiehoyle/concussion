@@ -30,16 +30,17 @@ void circle( float radius,
 
 void square( float size,
              std::vector< GLfloat >& o_vertices,
-             std::vector< GLuint >& o_indices ) {
+             std::vector< GLuint >& o_indices,
+             std::vector< GLfloat >& o_uvs ) {
     CNC_ASSERT( size > 0.0f );
 
     /// TODO
     /// Tidy this up.
     o_vertices = {
-            -1.0f, 1.0f, 1.0f,
-            -1.0f, -1.0f, 1.0f,
-            1.0f, -1.0f, 1.0f,
-            1.0f, 1.0f, 1.0f
+            -1.0f, 1.0f, 0.0f,
+            -1.0f, -1.0f, 0.0f,
+            1.0f, 1.0f, 0.0f,
+            1.0f, -1.0f, 0.0f
     };
 
     for ( std::size_t i = 0; i < o_vertices.size(); ++i ) {
@@ -47,8 +48,15 @@ void square( float size,
     }
 
     o_indices = {
-            0, 1, 3,
-            3, 1, 2
+            0, 1, 2,
+            2, 1, 3
+    };
+
+    o_uvs = {
+            0.0f, 1.0f,
+            0.0f, 0.0f,
+            1.0f, 1.0f,
+            1.0f, 0.0f
     };
 }
 
