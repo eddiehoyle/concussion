@@ -24,10 +24,20 @@ Application::Application()
         : m_window( nullptr ) {
     m_window = std::unique_ptr< Window >( new Window() );
 }
-void drawSquare()
-{
 
+// t: current time, b: begInnIng value, c: change In value, d: duration
+float easeIn( float time, float start, float step, float duration ) {
+    return step*(time/=duration)*time*time*time*time + start;
 }
+
+float easeOut( float time, float start, float step, float duration ) {
+    return step*((time=time/duration-1)*time*time*time*time + 1) + start;
+}
+
+float easeOutExp(float t,float b , float c, float d) {
+    return (t==d) ? b+c : c * (-pow(2, -10 * t/d) + 1) + b;
+}
+
 void Application::run() {
 
     double elapsed = 0.0;
@@ -39,38 +49,38 @@ void Application::run() {
     bool vertex_shader_exists;
     bool fragment_shader_exists;
 
-    const std::string simple_vertex_path = io::find_resource( "shaders/simple_vertex.glsl", vertex_shader_exists );
+    const std::string grenade_vertex_path = io::find_resource( "shaders/grenade.vert", vertex_shader_exists );
     CNC_ASSERT( vertex_shader_exists );
-    const std::string simple_vertex_source = io::read_file( simple_vertex_path );
+    const std::string grenade_vertex_source = io::read_file( grenade_vertex_path );
 
-    const std::string simple_fragment_path = io::find_resource( "shaders/simple_fragment.glsl", fragment_shader_exists );
+    const std::string grenade_fragment_path = io::find_resource( "shaders/grenade.frag", fragment_shader_exists );
     CNC_ASSERT( fragment_shader_exists );
-    const std::string simple_fragment_source = io::read_file( simple_fragment_path );
+    const std::string grenade_fragment_source = io::read_file( grenade_fragment_path );
 
-    const std::string gui_vertex_path = io::find_resource( "shaders/gui_vertex.glsl", vertex_shader_exists );
+    const std::string grid_vertex_path = io::find_resource( "shaders/grid_vertex.glsl", vertex_shader_exists );
     CNC_ASSERT( vertex_shader_exists );
-    const std::string gui_vertex_source = io::read_file( gui_vertex_path );
+    const std::string grid_vertex_source = io::read_file( grid_vertex_path );
 
-    const std::string gui_fragment_path = io::find_resource( "shaders/gui_fragment.glsl", fragment_shader_exists );
+    const std::string grid_fragment_path = io::find_resource( "shaders/grid_fragment.glsl", fragment_shader_exists );
     CNC_ASSERT( fragment_shader_exists );
-    const std::string gui_fragment_source = io::read_file( gui_fragment_path );
+    const std::string grid_fragment_source = io::read_file( grid_fragment_path );
 
-    ShaderSource simple_source;
-    simple_source.name = "simple";
-    simple_source.vertex = simple_vertex_source.c_str();
-    simple_source.fragment = simple_fragment_source.c_str();
-    simple_source.attributes = { "i_position", "i_uv" };
-    simple_source.uniforms = { "u_projectionMatrix", "u_viewMatrix", "u_modelMatrix" };
+    ShaderSource grenade_source;
+    grenade_source.name = "grenade";
+    grenade_source.vertex = grenade_vertex_source.c_str();
+    grenade_source.fragment = grenade_fragment_source.c_str();
+    grenade_source.attributes = { "i_position", "i_uv" };
+    grenade_source.uniforms = { "u_projection", "u_view", "u_model" };
 
-    ShaderSource gui_source;
-    gui_source.name = "gui";
-    gui_source.vertex = gui_vertex_source.c_str();
-    gui_source.fragment = gui_fragment_source.c_str();
-    gui_source.attributes = { "i_position", "i_uv" };
-    gui_source.uniforms = { "u_projectionMatrix", "u_viewMatrix", "u_modelMatrix" };
+    ShaderSource grid_source;
+    grid_source.name = "grid";
+    grid_source.vertex = grid_vertex_source.c_str();
+    grid_source.fragment = grid_fragment_source.c_str();
+    grid_source.attributes = { "i_position", "i_uv" };
+    grid_source.uniforms = { "u_projectionMatrix", "u_viewMatrix", "u_modelMatrix" };
 
-    ShaderManager::instance()->compile( simple_source );
-    ShaderManager::instance()->compile( gui_source );
+    ShaderManager::instance()->compile( grenade_source );
+    ShaderManager::instance()->compile( grid_source );
 
     // Generate a mesh
     std::vector< GLfloat > circle_vertices;
@@ -113,8 +123,15 @@ void Application::run() {
 
     double value = 0.0;
 
-    glm::mat4 circle_model = glm::translate( glm::mat4( 1 ), glm::vec3( 1, 0, 0 ) );
+
+    glm::mat4 grenade_translate = glm::translate( glm::mat4( 1 ), glm::vec3( 0, 0, 0 ) );
+    glm::mat4 grenade_scale = glm::scale( glm::mat4( 1 ), glm::vec3( 1, 1, 1 ) );
+    glm::mat4 grenade_model = glm::translate( glm::mat4( 1 ), glm::vec3( 1, 0, 0 ) );
     glm::mat4 grid_model = glm::rotate( glm::mat4( 1 ), 90.0f, glm::vec3( 0.0f, 0.0f, 0.0f ) );
+
+    bool exploding = false;
+    double explode_time = 0.0;
+    double scale = 0.0;
 
     while ( m_window->open() ) {
 
@@ -123,8 +140,28 @@ void Application::run() {
         value += 0.03;
         view = glm::lookAt( glm::vec3( 0, 0, -(std::sin( value ) - 3 ) * 5 ), glm::vec3( 0, 0, 1 ), glm::vec3( 0, 1, 0 ) );
 
+        if ( exploding ) {
+            explode_time += elapsed;
+//            scale = easeIn( explode_time, 0.0, 1000000, 1.0 );
+//            scale = easeOut( explode_time, 0.0, 300, 3.0 );
+            scale = easeOutExp( explode_time, 0.0, 100, 0.2 );
+//            CNC_ERROR << "scale=" << scale;
+            if ( scale >= 3 ) {
+                scale = 0.0;
+                explode_time = 0.0;
+                exploding = false;
+            }
+        }
 
-        if ( update.pressed ) {
+        if ( tap && !update.pressed ) {
+
+            if ( exploding ) {
+                scale = 0.0;
+                explode_time = 0.0;
+            }
+
+            exploding = true;
+
             glm::vec2 device;
             m_window->to_device_coords( update.position.x, update.position.y,
                                         device.x, device.y );
@@ -145,9 +182,13 @@ void Application::run() {
             glm::vec3 position( glm::vec3( 0, 0, -view[3].z ) + ( tap_ray * scalar ) );
             position.z = 0.0;
 
-            circle_model = glm::translate( glm::mat4( 1 ), position );
+            grenade_translate = glm::translate( glm::mat4( 1 ), position );
+
         }
         tap = update.pressed;
+
+        grenade_scale = glm::scale( glm::mat4( 1 ), glm::vec3( scale, scale, 1.0 ) );
+        grenade_model = grenade_translate * grenade_scale;
 
         float scale = 5.0;
         glm::mat4 grid_scale = glm::scale( glm::mat4( 1 ), glm::vec3( 1, 1, 1 ) * scale );
@@ -157,10 +198,10 @@ void Application::run() {
 
         update.time = m_window->time();
 
-        ShaderManager::instance()->bind( "simple" );
-        ShaderManager::instance()->load( "u_projectionMatrix", projection );
-        ShaderManager::instance()->load( "u_viewMatrix", view );
-        ShaderManager::instance()->load( "u_modelMatrix", circle_model );
+        ShaderManager::instance()->bind( "grenade" );
+        ShaderManager::instance()->load( "u_projection", projection );
+        ShaderManager::instance()->load( "u_view", view );
+        ShaderManager::instance()->load( "u_model", grenade_model );
 
         glBindVertexArray( circle_vao );
         glEnableVertexAttribArray( 0 );
@@ -172,7 +213,7 @@ void Application::run() {
 
         ShaderManager::instance()->unbind();
 
-        ShaderManager::instance()->bind( "gui" );
+        ShaderManager::instance()->bind( "grid" );
         ShaderManager::instance()->load( "u_projectionMatrix", projection );
         ShaderManager::instance()->load( "u_viewMatrix", view );
         ShaderManager::instance()->load( "u_modelMatrix", grid_model );
