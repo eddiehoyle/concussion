@@ -11,6 +11,7 @@
 #include <CGraphics/mesh.hh>
 #include <CBase/input.hh>
 
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
@@ -103,7 +104,7 @@ void Application::run() {
 
     // Define some uniforms
     glm::mat4 projection = glm::perspectiveFov( 70.0f, 640.0f, 480.0f, 0.01f, 1000.0f );
-    glm::mat4 view = glm::lookAt( glm::vec3( 0, 0, -10.0 ), glm::vec3( 0, 0, -1 ), glm::vec3( 0, 1, 0 ) );
+    glm::mat4 view = glm::lookAt( glm::vec3( 0, 0, 0 ), glm::vec3( 0, 0, 1 ), glm::vec3( 0, 1, 0 ) );
 //    glm::mat4 view = glm::translate( glm::mat4( 1 ), glm::vec3( 0, 0, -3.0 ) );
 
 
@@ -119,16 +120,32 @@ void Application::run() {
 
         m_window->update_begin( &update );
 
-        value += 0.05;
+        value += 0.03;
+        view = glm::lookAt( glm::vec3( 0, 0, -(std::sin( value ) - 3 ) * 5 ), glm::vec3( 0, 0, 1 ), glm::vec3( 0, 1, 0 ) );
 
-        if ( tap && !update.pressed ) {
+
+        if ( update.pressed ) {
             glm::vec2 device;
             m_window->to_device_coords( update.position.x, update.position.y,
                                         device.x, device.y );
-            glm::vec4 eye = glm::inverse( projection ) * glm::vec4( device.x, device.y, -1.0f, 1.0f );
-            glm::vec4 ray = glm::normalize( view * eye );
-            circle_model = glm::translate( glm::mat4( 1 ), glm::vec3( ray.x, ray.y, 0.0 ) );
-            CNC_ERROR << circle_model[3][0] << ", " << circle_model[3][1];
+            glm::vec4 eye = glm::inverse( projection ) * glm::vec4( device.x, device.y, 1.0f, 1.0f );
+
+            glm::mat4 i_view = glm::inverse( view );
+            glm::vec3 cam_ray = glm::normalize( glm::vec3( 0, 0, -view[3].z ) );
+            glm::vec3 tap_ray = glm::normalize( glm::vec3( i_view * eye ) );
+
+            double dot = glm::dot( cam_ray, tap_ray );
+            double angle_rad = std::acos( dot );
+            double angle_deg = glm::degrees( std::acos( dot ) );
+            double adjacent = cam_ray.z;
+            double opposite = std::tan( angle_rad ) * adjacent;
+            double hypotenuse = std::sqrt( std::pow( adjacent, 2 ) + std::pow( opposite, 2 ) );
+            double scalar = hypotenuse * -view[3].z;
+
+            glm::vec3 position( glm::vec3( 0, 0, -view[3].z ) + ( tap_ray * scalar ) );
+            position.z = 0.0;
+
+            circle_model = glm::translate( glm::mat4( 1 ), position );
         }
         tap = update.pressed;
 
