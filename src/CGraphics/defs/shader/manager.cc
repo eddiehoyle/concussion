@@ -146,6 +146,13 @@ void ShaderManager::load( const char* uniform, const glm::mat4& matrix ) {
     glUniformMatrix4fv( iter->second, 1, false, glm::value_ptr( matrix ) );
 }
 
+void ShaderManager::load( const char* uniform, float value ) {
+    CNC_ASSERT( m_active != nullptr );
+    auto iter = m_active->uniforms.find( uniform );
+    CNC_ASSERT( iter != m_active->uniforms.end() );
+    glUniform1f( iter->second, value );
+}
+
 } // namespace graphics
 
 } // namespace concussion

@@ -29,6 +29,7 @@ public:
     void unbind();
 
     void load( const char* uniform, const glm::mat4& matrix );
+    void load( const char* uniform, float value );
 
 private:
     ShaderManager() = default;

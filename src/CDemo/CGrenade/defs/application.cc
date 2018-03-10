@@ -57,11 +57,11 @@ void Application::run() {
     CNC_ASSERT( fragment_shader_exists );
     const std::string grenade_fragment_source = io::read_file( grenade_fragment_path );
 
-    const std::string grid_vertex_path = io::find_resource( "shaders/grid_vertex.glsl", vertex_shader_exists );
+    const std::string grid_vertex_path = io::find_resource( "shaders/grid.vert", vertex_shader_exists );
     CNC_ASSERT( vertex_shader_exists );
     const std::string grid_vertex_source = io::read_file( grid_vertex_path );
 
-    const std::string grid_fragment_path = io::find_resource( "shaders/grid_fragment.glsl", fragment_shader_exists );
+    const std::string grid_fragment_path = io::find_resource( "shaders/grid.frag", fragment_shader_exists );
     CNC_ASSERT( fragment_shader_exists );
     const std::string grid_fragment_source = io::read_file( grid_fragment_path );
 
@@ -77,7 +77,7 @@ void Application::run() {
     grid_source.vertex = grid_vertex_source.c_str();
     grid_source.fragment = grid_fragment_source.c_str();
     grid_source.attributes = { "i_position", "i_uv" };
-    grid_source.uniforms = { "u_projectionMatrix", "u_viewMatrix", "u_modelMatrix" };
+    grid_source.uniforms = { "u_projection", "u_view", "u_model" };
 
     ShaderManager::instance()->compile( grenade_source );
     ShaderManager::instance()->compile( grid_source );
@@ -113,21 +113,16 @@ void Application::run() {
     unbind_vao();
 
     // Define some uniforms
-    glm::mat4 projection = glm::perspectiveFov( 70.0f, 640.0f, 480.0f, 0.01f, 1000.0f );
-    glm::mat4 view = glm::lookAt( glm::vec3( 0, 0, 0 ), glm::vec3( 0, 0, 1 ), glm::vec3( 0, 1, 0 ) );
-//    glm::mat4 view = glm::translate( glm::mat4( 1 ), glm::vec3( 0, 0, -3.0 ) );
-
+    glm::mat4 projection = glm::perspectiveFov( 70.0f, 640.0f, 480.0f, 1.0f, 1000.0f );
 
     Update update;
     bool tap = false;
 
     double value = 0.0;
 
-
     glm::mat4 grenade_translate = glm::translate( glm::mat4( 1 ), glm::vec3( 0, 0, 0 ) );
     glm::mat4 grenade_scale = glm::scale( glm::mat4( 1 ), glm::vec3( 1, 1, 1 ) );
     glm::mat4 grenade_model = glm::translate( glm::mat4( 1 ), glm::vec3( 1, 0, 0 ) );
-    glm::mat4 grid_model = glm::rotate( glm::mat4( 1 ), 90.0f, glm::vec3( 0.0f, 0.0f, 0.0f ) );
 
     bool exploding = false;
     double explode_time = 0.0;
@@ -138,14 +133,13 @@ void Application::run() {
         m_window->update_begin( &update );
 
         value += 0.03;
-        view = glm::lookAt( glm::vec3( 0, 0, -(std::sin( value ) - 3 ) * 5 ), glm::vec3( 0, 0, 1 ), glm::vec3( 0, 1, 0 ) );
+
+        float asd = -(std::sin( value ) - 3 ) * 25;
+        glm::mat4 view = glm::lookAt( glm::vec3( 0, 0, -25 ), glm::vec3( 0, 0, 1 ), glm::vec3( 0, 1, 0 ) );
 
         if ( exploding ) {
             explode_time += elapsed;
-//            scale = easeIn( explode_time, 0.0, 1000000, 1.0 );
-//            scale = easeOut( explode_time, 0.0, 300, 3.0 );
-            scale = easeOutExp( explode_time, 0.0, 100, 0.2 );
-//            CNC_ERROR << "scale=" << scale;
+            scale = easeOutExp( explode_time, 0.0, 100, 1.0 );
             if ( scale >= 3 ) {
                 scale = 0.0;
                 explode_time = 0.0;
@@ -190,10 +184,10 @@ void Application::run() {
         grenade_scale = glm::scale( glm::mat4( 1 ), glm::vec3( scale, scale, 1.0 ) );
         grenade_model = grenade_translate * grenade_scale;
 
-        float scale = 5.0;
+        float scale = 20.0;
         glm::mat4 grid_scale = glm::scale( glm::mat4( 1 ), glm::vec3( 1, 1, 1 ) * scale );
-        glm::mat4 grid_rotate( 1 );
-        glm::mat4 grid_translate = glm::translate( glm::mat4( 1 ), glm::vec3( 0, std::sin( 0 ), 0 ) );
+        glm::mat4 grid_rotate = glm::rotate( glm::mat4( 1 ), glm::radians( 90.0f ), glm::vec3(0, 0, 1));
+        glm::mat4 grid_translate = glm::translate( glm::mat4( 1 ), glm::vec3( 0, 0, 0 ) );
         glm::mat4 grid_model = grid_scale * grid_rotate * grid_translate;
 
         update.time = m_window->time();
@@ -214,9 +208,9 @@ void Application::run() {
         ShaderManager::instance()->unbind();
 
         ShaderManager::instance()->bind( "grid" );
-        ShaderManager::instance()->load( "u_projectionMatrix", projection );
-        ShaderManager::instance()->load( "u_viewMatrix", view );
-        ShaderManager::instance()->load( "u_modelMatrix", grid_model );
+        ShaderManager::instance()->load( "u_projection", projection );
+        ShaderManager::instance()->load( "u_view", view );
+        ShaderManager::instance()->load( "u_model", grid_model );
 
         glEnable( GL_BLEND );
         glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
