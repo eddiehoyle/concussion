@@ -18,6 +18,7 @@ include_directories(
         ext/glfw/include
         ext/glm
         ext/stb
+        ext/tinyobjloader
         ${CNC_INCLUDE_DIR})
 
 add_definitions(

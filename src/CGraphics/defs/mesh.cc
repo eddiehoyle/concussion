@@ -1,10 +1,97 @@
 #include <CBase/assert.hh>
 #include <cmath>
+#include <tiny_obj_loader.h>
+#include <CBase/resource.hh>
+#include <CBase/io.hh>
 #include "mesh.hh"
 
 namespace concussion {
 
 namespace graphics {
+
+void cube( float size,
+           std::vector< GLfloat >& o_vertices,
+           std::vector< GLfloat >& o_normals,
+           std::vector< GLfloat >& o_uvs,
+           std::vector< GLuint >& o_indices ) {
+
+    o_vertices = {
+            -1.0f,1.0f,-1.0f,
+            -1.0f,-1.0f,-1.0f,
+            1.0f,-1.0f,-1.0f,
+            1.0f,1.0f,-1.0f,
+
+            -1.0f,1.0f,1.0f,
+            -1.0f,-1.0f,1.0f,
+            1.0f,-1.0f,1.0f,
+            1.0f,1.0f,1.0f,
+
+            1.0f,1.0f,-1.0f,
+            1.0f,-1.0f,-1.0f,
+            1.0f,-1.0f,1.0f,
+            1.0f,1.0f,1.0f,
+
+            -1.0f,1.0f,-1.0f,
+            -1.0f,-1.0f,-1.0f,
+            -1.0f,-1.0f,1.0f,
+            -1.0f,1.0f,1.0f,
+
+            -1.0f,1.0f,1.0f,
+            -1.0f,1.0f,-1.0f,
+            1.0f,1.0f,-1.0f,
+            1.0f,1.0f,1.0f,
+
+            -1.0f,-1.0f,1.0f,
+            -1.0f,-1.0f,-1.0f,
+            1.0f,-1.0f,-1.0f,
+            1.0f,-1.0f,1.0f
+    };
+
+    // This is bad. Fix this.
+    o_normals = o_vertices;
+
+    o_uvs = {
+            0,0,
+            0,1,
+            1,1,
+            1,0,
+            0,0,
+            0,1,
+            1,1,
+            1,0,
+            0,0,
+            0,1,
+            1,1,
+            1,0,
+            0,0,
+            0,1,
+            1,1,
+            1,0,
+            0,0,
+            0,1,
+            1,1,
+            1,0,
+            0,0,
+            0,1,
+            1,1,
+            1,0
+    };
+
+    o_indices = {
+            0,1,3,
+            3,1,2,
+            4,5,7,
+            7,5,6,
+            8,9,11,
+            11,9,10,
+            12,13,15,
+            15,13,14,
+            16,17,19,
+            19,17,18,
+            20,21,23,
+            23,21,22
+    };
+}
 
 void circle( float radius,
              unsigned int subdivisions,
@@ -60,7 +147,7 @@ void square( float size,
     };
 }
 
-void sphere2( float radius,
+void sphere( float radius,
              unsigned int rings,
              unsigned int sectors,
              std::vector< GLfloat >& o_vertices,
@@ -113,7 +200,7 @@ void sphere2( float radius,
     }
 }
 
-void sphere( float radius,
+void sphere2( float radius,
              unsigned int rings,
              unsigned int sectors,
              std::vector< GLfloat >& o_vertices,

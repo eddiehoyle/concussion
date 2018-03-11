@@ -19,7 +19,8 @@ target_link_libraries(${TARGET_NAME}
         ${GLEW_LIBRARIES}
         glfw
         CBase
-        CGraphics)
+        CGraphics
+        tinyobjloader)
 
 
 

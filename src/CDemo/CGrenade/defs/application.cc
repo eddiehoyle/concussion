@@ -69,7 +69,7 @@ void Application::run() {
     grenade_source.name = "grenade";
     grenade_source.vertex = grenade_vertex_source.c_str();
     grenade_source.fragment = grenade_fragment_source.c_str();
-    grenade_source.attributes = { "i_position", "i_uv" };
+    grenade_source.attributes = { "i_position", "i_normal", "i_uv" };
     grenade_source.uniforms = { "u_projection", "u_view", "u_model" };
 
     ShaderSource grid_source;
@@ -83,25 +83,27 @@ void Application::run() {
     ShaderManager::instance()->compile( grid_source );
 
 //    // Generate a mesh
-//    std::vector< GLfloat > circle_vertices;
-//    std::vector< GLuint > circle_indices;
-//    std::vector< GLfloat > circle_uvs;
-//    circle( 0.5f, 32, circle_vertices, circle_indices, circle_uvs );
+//    std::vector< GLfloat > grenade_vertices;
+//    std::vector< GLuint > grenade_indices;
+//    std::vector< GLfloat > grenade_uvs;
+//    circle( 0.5f, 32, grenade_vertices, grenade_indices, grenade_uvs );
 
     // Generate a mesh
-    std::vector< GLfloat > circle_vertices;
-    std::vector< GLfloat > circle_normals;
-    std::vector< GLfloat > circle_uvs;
-    std::vector< GLuint > circle_indices;
-    sphere( 1.0f, 32, 32, circle_vertices, circle_normals, circle_uvs, circle_indices );
+    std::vector< GLfloat > grenade_vertices;
+    std::vector< GLfloat > grenade_normals;
+    std::vector< GLfloat > grenade_uvs;
+    std::vector< GLuint > grenade_indices;
+//    sphere( 1.0f, 16, 16, grenade_vertices, grenade_normals, grenade_uvs, grenade_indices );
+    cube( 1.0f, grenade_vertices, grenade_normals, grenade_uvs, grenade_indices );
 
     // Buffer mesh
-    GLuint circle_vao;
-    circle_vao = create_vao();
-    bind_vao( circle_vao );
-    buffer_indices( circle_indices );
-    buffer_data( 0, 3, circle_vertices );
-    buffer_data( 1, 2, circle_uvs );
+    GLuint grenade_vao;
+    grenade_vao = create_vao();
+    bind_vao( grenade_vao );
+    buffer_indices( grenade_indices );
+    buffer_data( 0, 3, grenade_vertices );
+    buffer_data( 1, 3, grenade_normals );
+    buffer_data( 2, 2, grenade_uvs );
     unbind_vao();
 
     // Generate a mesh
@@ -190,8 +192,7 @@ void Application::run() {
         tap = update.pressed;
 
         grenade_scale = glm::scale( glm::mat4( 1 ), glm::vec3( scale, scale, scale ) );
-        glm::mat4 grenade_rotate = glm::rotate( glm::mat4( 1 ), (float)value, glm::vec3(1, std::sin(value), 0));
-//        glm::mat4 grenade_rotate( 1 );
+        glm::mat4 grenade_rotate = glm::rotate( glm::mat4( 1 ), (float)value, glm::vec3(0.3, 1, 0.2));
         grenade_model = grenade_scale * grenade_rotate;// * grenade_translate;
 
         float scale = 20.0;
@@ -207,12 +208,14 @@ void Application::run() {
         ShaderManager::instance()->load( "u_view", view );
         ShaderManager::instance()->load( "u_model", grenade_model );
 
-        glBindVertexArray( circle_vao );
+        glBindVertexArray( grenade_vao );
         glEnableVertexAttribArray( 0 );
         glEnableVertexAttribArray( 1 );
-        glDrawElements( GL_TRIANGLES, circle_vertices.size(), GL_UNSIGNED_INT, 0 );
+        glEnableVertexAttribArray( 2 );
+        glDrawElements( GL_TRIANGLES, grenade_indices.size(), GL_UNSIGNED_INT, 0 );
         glDisableVertexAttribArray( 0 );
         glDisableVertexAttribArray( 1 );
+        glDisableVertexAttribArray( 2 );
         glBindVertexArray( 0 );
 
         ShaderManager::instance()->unbind();
@@ -228,7 +231,7 @@ void Application::run() {
         glBindVertexArray( grid_vao );
         glEnableVertexAttribArray( 0 );
         glEnableVertexAttribArray( 1 );
-        glDrawElements( GL_TRIANGLES, grid_vertices.size(), GL_UNSIGNED_INT, 0 );
+        glDrawElements( GL_TRIANGLES, grid_indices.size(), GL_UNSIGNED_INT, 0 );
         glDisableVertexAttribArray( 0 );
         glDisableVertexAttribArray( 1 );
         glBindVertexArray( 0 );

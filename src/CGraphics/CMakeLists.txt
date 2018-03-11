@@ -17,6 +17,7 @@ target_compile_definitions(${TARGET_NAME} PRIVATE
 target_link_libraries(${TARGET_NAME}
         ${OPENGL_LIBRARIES}
         ${GLEW_LIBRARIES}
+        tinyobjloader
         glfw
         CBase)
 

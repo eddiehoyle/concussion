@@ -12,6 +12,12 @@ namespace concussion {
 
 namespace graphics {
 
+void cube( float radius,
+           std::vector< GLfloat >& o_vertices,
+           std::vector< GLfloat >& o_normals,
+           std::vector< GLfloat >& o_uvs,
+           std::vector< GLuint >& o_indices );
+
 /// Generate a 2D circle mesh (currently drawn via GL_TRIANGLES)
 /// The origin point is the center of the circle.
 /// @param radius The size of the circle.
