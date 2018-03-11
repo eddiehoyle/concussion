@@ -2,21 +2,18 @@
 #define CONCUSSION_SHAPE_HH
 
 #include <GL/glew.h>
+
+#include <vector>
 #include <memory>
 
 namespace concussion {
 
 namespace graphics {
 
-class Shape {
-
-public:
-    explicit Shape( GLuint vao );
-    void bind();
-    void unbind();
-
-private:
-    GLuint m_vao;
+struct Shape {
+    std::vector< GLuint > indices;
+    std::vector< GLfloat > vertices;
+    std::vector< GLfloat > uvs;
 };
 
 typedef std::shared_ptr< Shape > ShapePtr;

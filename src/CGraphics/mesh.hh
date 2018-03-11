@@ -34,19 +34,15 @@ void square( float size,
              std::vector< GLuint >& o_indices,
              std::vector< GLfloat >& o_uvs );
 
-class Shape {
+/// TODO
+void sphere( float radius,
+             unsigned int rings,
+             unsigned int sectors,
+             std::vector< GLfloat >& o_vertices,
+             std::vector< GLfloat >& o_normals,
+             std::vector< GLfloat >& o_uvs,
+             std::vector< GLuint >& o_indices );
 
-public:
-    explicit Shape( GLuint vao );
-    void bind();
-    void unbind();
-
-private:
-    GLuint m_vao;
-    std::vector< GLuint > m_attributes;
-};
-
-typedef std::shared_ptr< Shape > ShapePtr;
 
 } // namespace graphics
 

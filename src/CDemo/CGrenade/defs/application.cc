@@ -82,11 +82,18 @@ void Application::run() {
     ShaderManager::instance()->compile( grenade_source );
     ShaderManager::instance()->compile( grid_source );
 
+//    // Generate a mesh
+//    std::vector< GLfloat > circle_vertices;
+//    std::vector< GLuint > circle_indices;
+//    std::vector< GLfloat > circle_uvs;
+//    circle( 0.5f, 32, circle_vertices, circle_indices, circle_uvs );
+
     // Generate a mesh
     std::vector< GLfloat > circle_vertices;
-    std::vector< GLuint > circle_indices;
+    std::vector< GLfloat > circle_normals;
     std::vector< GLfloat > circle_uvs;
-    circle( 0.5f, 32, circle_vertices, circle_indices, circle_uvs );
+    std::vector< GLuint > circle_indices;
+    sphere( 1.0f, 32, 32, circle_vertices, circle_normals, circle_uvs, circle_indices );
 
     // Buffer mesh
     GLuint circle_vao;
@@ -139,12 +146,13 @@ void Application::run() {
 
         if ( exploding ) {
             explode_time += elapsed;
-            scale = easeOutExp( explode_time, 0.0, 100, 1.0 );
-            if ( scale >= 3 ) {
-                scale = 0.0;
-                explode_time = 0.0;
-                exploding = false;
-            }
+//            scale = easeOutExp( explode_time, 0.0, 100, 1.0 );
+            scale = 3;
+//            if ( scale >= 3 ) {
+//                scale = 0.0;
+//                explode_time = 0.0;
+//                exploding = false;
+//            }
         }
 
         if ( tap && !update.pressed ) {
@@ -181,8 +189,10 @@ void Application::run() {
         }
         tap = update.pressed;
 
-        grenade_scale = glm::scale( glm::mat4( 1 ), glm::vec3( scale, scale, 1.0 ) );
-        grenade_model = grenade_translate * grenade_scale;
+        grenade_scale = glm::scale( glm::mat4( 1 ), glm::vec3( scale, scale, scale ) );
+        glm::mat4 grenade_rotate = glm::rotate( glm::mat4( 1 ), (float)value, glm::vec3(1, std::sin(value), 0));
+//        glm::mat4 grenade_rotate( 1 );
+        grenade_model = grenade_scale * grenade_rotate;// * grenade_translate;
 
         float scale = 20.0;
         glm::mat4 grid_scale = glm::scale( glm::mat4( 1 ), glm::vec3( 1, 1, 1 ) * scale );
