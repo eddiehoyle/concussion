@@ -12,11 +12,19 @@ namespace concussion {
 
 namespace graphics {
 
-void cube( float radius,
+/// TODO
+void cube( float size,
            std::vector< GLfloat >& o_vertices,
            std::vector< GLfloat >& o_normals,
            std::vector< GLfloat >& o_uvs,
            std::vector< GLuint >& o_indices );
+
+/// TODO
+void sphere( float radius,
+             std::vector< GLfloat >& o_vertices,
+             std::vector< GLfloat >& o_normals,
+             std::vector< GLfloat >& o_uvs,
+             std::vector< GLuint >& o_indices );
 
 /// Generate a 2D circle mesh (currently drawn via GL_TRIANGLES)
 /// The origin point is the center of the circle.
@@ -39,15 +47,6 @@ void square( float size,
              std::vector< GLfloat >& o_vertices,
              std::vector< GLuint >& o_indices,
              std::vector< GLfloat >& o_uvs );
-
-/// TODO
-void sphere( float radius,
-             unsigned int rings,
-             unsigned int sectors,
-             std::vector< GLfloat >& o_vertices,
-             std::vector< GLfloat >& o_normals,
-             std::vector< GLfloat >& o_uvs,
-             std::vector< GLuint >& o_indices );
 
 
 } // namespace graphics

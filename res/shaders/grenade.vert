@@ -6,7 +6,6 @@ in vec2 i_uv;
 
 out vec3 t_normal;
 out vec2 t_uv;
-out vec3 t_color;
 
 uniform mat4 u_model;
 uniform mat4 u_view;
@@ -20,6 +19,6 @@ void main( void ) {
 
     // Transient
     t_normal = ( transpose( inverse( u_model ) ) * vec4( i_normal, 0.0 ) ).xyz;
+    t_normal = normalize( t_normal );
     t_uv = i_uv;
-    t_color = vec3( i_position.x + 0.5f, 1.0f, i_position.y + 0.5f );
 }

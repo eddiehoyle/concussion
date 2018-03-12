@@ -9,7 +9,7 @@ file(GLOB PROJECT_CONFIGS CMakeLists.txt)
 
 add_library(${TARGET_NAME} SHARED
         ${PROJECT_SOURCES}
-        ${PROJECT_HEADERS} defs/input/mouse.cc input/mouse.hh defs/input.cc input.hh)
+        ${PROJECT_HEADERS})
 target_include_directories(${TARGET_NAME} PRIVATE
         ${TARGET_INCLUDE_DIR})
 target_compile_definitions(${TARGET_NAME} PRIVATE

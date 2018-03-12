@@ -4,6 +4,10 @@
 #include <CBase/resource.hh>
 #include <CBase/io.hh>
 #include "mesh.hh"
+#include <CBase/model.hh>
+
+#include <tiny_obj_loader.h>
+#include <CGraphics/shape.hh>
 
 namespace concussion {
 
@@ -15,82 +19,36 @@ void cube( float size,
            std::vector< GLfloat >& o_uvs,
            std::vector< GLuint >& o_indices ) {
 
-    o_vertices = {
-            -1.0f,1.0f,-1.0f,
-            -1.0f,-1.0f,-1.0f,
-            1.0f,-1.0f,-1.0f,
-            1.0f,1.0f,-1.0f,
+    bool result;
+    const std::string cube_path = io::find_resource( "sphere.obj", result );
+    CNC_ASSERT( result );
 
-            -1.0f,1.0f,1.0f,
-            -1.0f,-1.0f,1.0f,
-            1.0f,-1.0f,1.0f,
-            1.0f,1.0f,1.0f,
+    Shape shape;
+    load_obj( cube_path, shape );
 
-            1.0f,1.0f,-1.0f,
-            1.0f,-1.0f,-1.0f,
-            1.0f,-1.0f,1.0f,
-            1.0f,1.0f,1.0f,
+    o_vertices = shape.mesh.vertices;
+    o_normals = shape.mesh.normals;
+    o_uvs = shape.mesh.uvs;
+    o_indices = shape.mesh.indices;
+}
 
-            -1.0f,1.0f,-1.0f,
-            -1.0f,-1.0f,-1.0f,
-            -1.0f,-1.0f,1.0f,
-            -1.0f,1.0f,1.0f,
+void sphere( float radius,
+             std::vector< GLfloat >& o_vertices,
+             std::vector< GLfloat >& o_normals,
+             std::vector< GLfloat >& o_uvs,
+             std::vector< GLuint >& o_indices ) {
 
-            -1.0f,1.0f,1.0f,
-            -1.0f,1.0f,-1.0f,
-            1.0f,1.0f,-1.0f,
-            1.0f,1.0f,1.0f,
+    bool result;
+    const std::string cube_path = io::find_resource( "sphere.obj", result );
+    CNC_ASSERT( result );
 
-            -1.0f,-1.0f,1.0f,
-            -1.0f,-1.0f,-1.0f,
-            1.0f,-1.0f,-1.0f,
-            1.0f,-1.0f,1.0f
-    };
+    Shape shape;
+    load_obj( cube_path, shape );
 
-    // This is bad. Fix this.
-    o_normals = o_vertices;
-
-    o_uvs = {
-            0,0,
-            0,1,
-            1,1,
-            1,0,
-            0,0,
-            0,1,
-            1,1,
-            1,0,
-            0,0,
-            0,1,
-            1,1,
-            1,0,
-            0,0,
-            0,1,
-            1,1,
-            1,0,
-            0,0,
-            0,1,
-            1,1,
-            1,0,
-            0,0,
-            0,1,
-            1,1,
-            1,0
-    };
-
-    o_indices = {
-            0,1,3,
-            3,1,2,
-            4,5,7,
-            7,5,6,
-            8,9,11,
-            11,9,10,
-            12,13,15,
-            15,13,14,
-            16,17,19,
-            19,17,18,
-            20,21,23,
-            23,21,22
-    };
+    o_vertices = shape.mesh.vertices;
+    o_normals = shape.mesh.normals;
+    o_uvs = shape.mesh.uvs;
+    o_indices = shape.mesh.indices;
 }
 
 void circle( float radius,
@@ -147,7 +105,7 @@ void square( float size,
     };
 }
 
-void sphere( float radius,
+void sphere3( float radius,
              unsigned int rings,
              unsigned int sectors,
              std::vector< GLfloat >& o_vertices,
