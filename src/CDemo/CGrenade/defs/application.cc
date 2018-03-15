@@ -8,6 +8,7 @@
 #include <CBase/assert.hh>
 #include <CGraphics/manager.hh>
 #include <CGraphics/buffer.hh>
+#include <CGraphics/intersect.hh>
 #include <CGraphics/mesh.hh>
 #include <CBase/input.hh>
 
@@ -135,7 +136,7 @@ void Application::run() {
 
     bool exploding = false;
     double explode_time = 0.0;
-    double scale = 0.0;
+    double scale = 3.0;
 
     while ( m_window->open() ) {
 
@@ -143,60 +144,48 @@ void Application::run() {
 
         value += 0.03;
 
-        float asd = -(std::sin( value ) - 3 ) * 25;
-        glm::mat4 view = glm::lookAt( glm::vec3( 0, 0, -25 ), glm::vec3( 0, 0, 1 ), glm::vec3( 0, 1, 0 ) );
+        float sin_zoom = -(std::sin( value ) - 3 ) * 25 + 25;
+        glm::mat4 view = glm::lookAt( glm::vec3( 0, 0, sin_zoom ), glm::vec3( 0, 0, 1 ), glm::vec3( 0, 1, 0 ) );
 
-        if ( exploding ) {
-            explode_time += elapsed;
+
+//        if ( exploding ) {
+//            explode_time += elapsed;
 //            scale = easeOutExp( explode_time, 0.0, 100, 1.0 );
-            scale = 3;
+//            scale = 3;
 //            if ( scale >= 3 ) {
 //                scale = 0.0;
 //                explode_time = 0.0;
 //                exploding = false;
 //            }
-        }
+//        }
 
-        if ( tap && !update.pressed ) {
 
-            if ( exploding ) {
-                scale = 0.0;
-                explode_time = 0.0;
-            }
+        if ( update.pressed ) {
 
-            exploding = true;
 
             glm::vec2 device;
-            m_window->to_device_coords( update.position.x, update.position.y,
-                                        device.x, device.y );
-            glm::vec4 eye = glm::inverse( projection ) * glm::vec4( device.x, device.y, 1.0f, 1.0f );
+            m_window->to_device_coords( update.position.x, update.position.y, device.x, device.y );
+            glm::vec4 ray_clip = glm::inverse( projection ) * glm::vec4( device.x, device.y, -1.0, 1.0 );
+            glm::vec4 ray_eye( ray_clip.x, ray_clip.y, -1.0, 0.0 );
+            glm::vec3 ray_world = glm::normalize( glm::vec3( glm::inverse( view ) * ray_eye ) );
 
-            glm::mat4 i_view = glm::inverse( view );
-            glm::vec3 cam_ray = glm::normalize( glm::vec3( 0, 0, -view[3].z ) );
-            glm::vec3 tap_ray = glm::normalize( glm::vec3( i_view * eye ) );
+            glm::vec3 intersection( 0, 0, 0 );
+            rayPlaneIntersect( glm::vec3( 0, 0, 0 ),
+                               glm::vec3( 0, 0, -1 ),
+                               glm::vec3( -view[3] ),
+                               ray_world,
+                               &intersection );
 
-            double dot = glm::dot( cam_ray, tap_ray );
-            double angle_rad = std::acos( dot );
-            double angle_deg = glm::degrees( std::acos( dot ) );
-            double adjacent = cam_ray.z;
-            double opposite = std::tan( angle_rad ) * adjacent;
-            double hypotenuse = std::sqrt( std::pow( adjacent, 2 ) + std::pow( opposite, 2 ) );
-            double scalar = hypotenuse * -view[3].z;
-
-            glm::vec3 position( glm::vec3( 0, 0, -view[3].z ) + ( tap_ray * scalar ) );
-            position.z = 0.0;
-
-            grenade_translate = glm::translate( glm::mat4( 1 ), position );
+            grenade_translate = glm::translate( glm::mat4( 1 ), intersection );
 
         }
         tap = update.pressed;
 
         grenade_scale = glm::scale( glm::mat4( 1 ), glm::vec3( scale, scale, scale ) );
         glm::mat4 grenade_rotate = glm::rotate( glm::mat4( 1 ), (float)value, glm::vec3(0.3, 1, 0.2));
-        grenade_model = grenade_scale * grenade_rotate;// * grenade_translate;
+        grenade_model = grenade_translate * grenade_rotate * grenade_scale;
 
-        float scale = 20.0;
-        glm::mat4 grid_scale = glm::scale( glm::mat4( 1 ), glm::vec3( 1, 1, 1 ) * scale );
+        glm::mat4 grid_scale = glm::scale( glm::mat4( 1 ), glm::vec3( 1, 1, 1 ) * 20.0 );
         glm::mat4 grid_rotate = glm::rotate( glm::mat4( 1 ), glm::radians( 90.0f ), glm::vec3(0, 0, 1));
         glm::mat4 grid_translate = glm::translate( glm::mat4( 1 ), glm::vec3( 0, 0, 0 ) );
         glm::mat4 grid_model = grid_scale * grid_rotate * grid_translate;

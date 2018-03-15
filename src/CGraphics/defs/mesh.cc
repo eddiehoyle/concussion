@@ -20,7 +20,7 @@ void cube( float size,
            std::vector< GLuint >& o_indices ) {
 
     bool result;
-    const std::string cube_path = io::find_resource( "sphere.obj", result );
+    const std::string cube_path = io::find_resource( "cube.obj", result );
     CNC_ASSERT( result );
 
     Shape shape;
