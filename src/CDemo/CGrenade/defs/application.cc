@@ -131,12 +131,19 @@ void Application::run() {
     double value = 0.0;
 
     glm::mat4 grenade_translate = glm::translate( glm::mat4( 1 ), glm::vec3( 0, 0, 0 ) );
+    glm::mat4 grenade_rotate = glm::rotate( glm::mat4( 1 ), 0.0f, glm::vec3( 0.0, 0.0, 0.0 ) );
     glm::mat4 grenade_scale = glm::scale( glm::mat4( 1 ), glm::vec3( 1, 1, 1 ) );
     glm::mat4 grenade_model = glm::translate( glm::mat4( 1 ), glm::vec3( 1, 0, 0 ) );
+    glm::vec3 grenade_move;
 
     bool exploding = false;
     double explode_time = 0.0;
     double scale = 3.0;
+
+    glm::vec2 tap_press;
+    glm::vec2 tap_release;
+
+
 
     while ( m_window->open() ) {
 
@@ -147,42 +154,48 @@ void Application::run() {
         float sin_zoom = -(std::sin( value ) - 3 ) * 25 + 25;
         glm::mat4 view = glm::lookAt( glm::vec3( 0, 0, sin_zoom ), glm::vec3( 0, 0, 1 ), glm::vec3( 0, 1, 0 ) );
 
-
-//        if ( exploding ) {
-//            explode_time += elapsed;
-//            scale = easeOutExp( explode_time, 0.0, 100, 1.0 );
-//            scale = 3;
-//            if ( scale >= 3 ) {
-//                scale = 0.0;
-//                explode_time = 0.0;
-//                exploding = false;
-//            }
+//        if ( update.pressed ) {
+//
+//            const glm::vec3 ray_world = compute_world_ray( m_window->viewport(),
+//                                                           update.position,
+//                                                           view,
+//                                                           projection );
+//
+//            glm::vec3 intersection( 0, 0, 0 );
+//            rayPlaneIntersect( glm::vec3( 0, 0, 0 ),
+//                               glm::vec3( 0, 0, -1 ),
+//                               glm::vec3( -view[3] ),
+//                               ray_world,
+//                               &intersection );
+//
+//            grenade_translate = glm::translate( glm::mat4( 1 ), intersection );
+//
 //        }
+//        tap = update.pressed;
+
+        if ( !tap && update.pressed ) {
+            tap_press = update.position;
+//            CNC_ERROR << "release=" << glm::to_string( tap_press );
+        }
 
 
-        if ( update.pressed ) {
+        if ( tap && !update.pressed ) {
+            tap_release = update.position;
+            CNC_ERROR << "press=" << glm::to_string( tap_press );
+            CNC_ERROR << "release=" << glm::to_string( tap_release );
 
-
-            glm::vec2 device;
-            m_window->to_device_coords( update.position.x, update.position.y, device.x, device.y );
-            glm::vec4 ray_clip = glm::inverse( projection ) * glm::vec4( device.x, device.y, -1.0, 1.0 );
-            glm::vec4 ray_eye( ray_clip.x, ray_clip.y, -1.0, 0.0 );
-            glm::vec3 ray_world = glm::normalize( glm::vec3( glm::inverse( view ) * ray_eye ) );
-
-            glm::vec3 intersection( 0, 0, 0 );
-            rayPlaneIntersect( glm::vec3( 0, 0, 0 ),
-                               glm::vec3( 0, 0, -1 ),
-                               glm::vec3( -view[3] ),
-                               ray_world,
-                               &intersection );
-
-            grenade_translate = glm::translate( glm::mat4( 1 ), intersection );
-
+            double length = glm::length( tap_release - tap_press );
+            if ( length > 10 ) {
+                const glm::vec2 diff( tap_release - tap_press );
+                grenade_translate = glm::mat4( 1 );
+                grenade_move = glm::normalize( glm::vec3( diff.x, -diff.y, 0.0 ) ) / 100.0;
+            }
         }
         tap = update.pressed;
 
+        grenade_translate *= glm::translate( glm::mat4( 1 ), grenade_move );
+        grenade_rotate = glm::rotate( glm::mat4( 1 ), (float)value, glm::vec3(0.3, 1, 0.2));
         grenade_scale = glm::scale( glm::mat4( 1 ), glm::vec3( scale, scale, scale ) );
-        glm::mat4 grenade_rotate = glm::rotate( glm::mat4( 1 ), (float)value, glm::vec3(0.3, 1, 0.2));
         grenade_model = grenade_translate * grenade_rotate * grenade_scale;
 
         glm::mat4 grid_scale = glm::scale( glm::mat4( 1 ), glm::vec3( 1, 1, 1 ) * 20.0 );

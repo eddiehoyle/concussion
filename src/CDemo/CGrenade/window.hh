@@ -6,11 +6,19 @@
 #include <map>
 #include <vector>
 
+#include <glm/glm.hpp>
+
 class GLFWwindow;
 
 namespace concussion {
 
-struct Update;
+class Window;
+class Update;
+
+glm::vec3 compute_world_ray( const glm::vec2& window,
+                             const glm::vec2& mouse,
+                             const glm::mat4& view,
+                             const glm::mat4& projection );
 
 class Window {
 public:
@@ -25,8 +33,9 @@ public:
 
     int width() const;
     int height() const;
+    glm::ivec2 viewport() const;
 
-    void to_device_coords( int x, int y, float& o_x, float& o_y ) const;
+//    void to_device_coords( int x, int y, float& o_x, float& o_y ) const;
 
 private:
     bool m_initialised;

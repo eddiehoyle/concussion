@@ -17,6 +17,18 @@ float clamp( float n, float lower, float upper ) {
     return std::max(lower, std::min(n, upper));
 }
 
+glm::vec3 compute_world_ray( const glm::vec2& window,
+                             const glm::vec2& mouse,
+                             const glm::mat4& view,
+                             const glm::mat4& projection ) {
+
+    const glm::vec2 device( clamp( ( 2.0f * mouse.x ) / window.x - 1, -1, 1 ),
+                            -clamp( ( 2.0f * mouse.y ) / window.y - 1, -1, 1 ) );
+    const glm::vec4 ray_clip = glm::inverse( projection ) * glm::vec4( device.x, device.y, -1.0, 1.0 );
+    const glm::vec4 ray_eye( ray_clip.x, ray_clip.y, -1.0, 0.0 );
+    return glm::normalize( glm::vec3( glm::inverse( view ) * ray_eye ) );
+}
+
 Window::Window()
         : m_handle( nullptr ),
           m_initialised( false ) {
@@ -101,21 +113,23 @@ void Window::request_quit() {
 }
 
 int Window::width() const {
-    int width, height;
-    glfwGetWindowSize( m_handle, &width, &height );
-    return width;
+    return viewport().x;
 }
 
 int Window::height() const {
-    int width, height;
-    glfwGetWindowSize( m_handle, &width, &height );
-    return height;
+    return viewport().y;
 }
 
-void Window::to_device_coords( int i_x, int i_y, float& o_x, float& o_y ) const {
-    o_x = clamp( ( 2.0f * i_x ) / width() - 1, -1, 1 );
-    o_y = -clamp( ( 2.0f * i_y ) / height() - 1, -1, 1 );
+glm::ivec2 Window::viewport() const {
+    glm::ivec2 viewport;
+    glfwGetWindowSize( m_handle, &viewport.x, &viewport.y );
+    return viewport;
 }
+
+//void Window::to_device_coords( int i_x, int i_y, float& o_x, float& o_y ) const {
+//    o_x = clamp( ( 2.0f * i_x ) / width() - 1, -1, 1 );
+//    o_y = -clamp( ( 2.0f * i_y ) / height() - 1, -1, 1 );
+//}
 
 Window::~Window() {
     CNC_ASSERT( m_initialised );
