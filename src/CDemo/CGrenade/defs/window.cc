@@ -93,9 +93,10 @@ void Window::update_begin( Update* input ) {
         return;
     };
 
+    // Mouse pos is from bottom left
     double x, y;
     glfwGetCursorPos( m_handle, &x, &y );
-    input->position = glm::vec2( x, y );
+    input->position = glm::vec2( x, height() - y );
     input->pressed = glfwGetMouseButton( m_handle, GLFW_MOUSE_BUTTON_1 ) == GLFW_PRESS;
 }
 

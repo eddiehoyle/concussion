@@ -181,20 +181,25 @@ void Application::run() {
 
         if ( tap && !update.pressed ) {
             tap_release = update.position;
-            CNC_ERROR << "press=" << glm::to_string( tap_press );
-            CNC_ERROR << "release=" << glm::to_string( tap_release );
+//            CNC_ERROR << "position=" << glm::to_string( update.position );
+//            CNC_ERROR << "press=" << glm::to_string( tap_press );
+//            CNC_ERROR << "release=" << glm::to_string( tap_release );
 
             double length = glm::length( tap_release - tap_press );
             if ( length > 10 ) {
                 const glm::vec2 diff( tap_release - tap_press );
+                double angle = std::atan2( diff.y, diff.x );
+                CNC_ERROR << glm::degrees( angle );
+
                 grenade_translate = glm::mat4( 1 );
-                grenade_move = glm::normalize( glm::vec3( diff.x, -diff.y, 0.0 ) ) / 100.0;
+                grenade_move = glm::normalize( glm::vec3( diff.x, diff.y, 0.0 ) ) / 5.0;
+                grenade_rotate = glm::rotate( glm::mat4( 1 ), (float)angle, glm::vec3(0, 0, 1));
             }
         }
         tap = update.pressed;
 
         grenade_translate *= glm::translate( glm::mat4( 1 ), grenade_move );
-        grenade_rotate = glm::rotate( glm::mat4( 1 ), (float)value, glm::vec3(0.3, 1, 0.2));
+//        grenade_rotate = glm::rotate( glm::mat4( 1 ), (float)value, glm::vec3(0.3, 1, 0.2));
         grenade_scale = glm::scale( glm::mat4( 1 ), glm::vec3( scale, scale, scale ) );
         grenade_model = grenade_translate * grenade_rotate * grenade_scale;
 
