@@ -6,6 +6,8 @@
 #include <glm/glm.hpp>
 #include <map>
 
+#include <CGraphics/shape.hh>
+
 namespace concussion {
 
 /// TODO
@@ -24,21 +26,21 @@ struct Material {
     std::map< std::string, std::string > unknown_parameter;
 };
 
-/// TODO
-struct Mesh {
-    std::vector< float > vertices;
-    std::vector< float > normals;
-    std::vector< float > uvs;
-    std::vector< unsigned int > indices;
-};
+///// TODO
+//struct Mesh {
+//    std::vector< float > vertices;
+//    std::vector< float > normals;
+//    std::vector< float > uvs;
+//    std::vector< unsigned int > indices;
+//};
 
-/// TODO
-struct Shape {
-    Material material;
-    Mesh mesh;
-};
+///// TODO
+//struct Shape {
+//    Material material;
+//    Mesh mesh;
+//};
 
-void load_obj( const std::string& path, Shape& shape );
+void load_obj( const std::string& path, graphics::Shape& shape );
 
 } // namespace concussion
 

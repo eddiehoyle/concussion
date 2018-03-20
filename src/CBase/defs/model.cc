@@ -205,7 +205,7 @@ static bool align_geometry( std::vector< float >& vertices,
     return true;
 }
 
-void load_obj( const std::string& path, Shape& shape ) {
+void load_obj( const std::string& path, graphics::Shape& shape ) {
 
     std::ifstream stream( path.c_str() );
     if ( !stream ) {
@@ -321,10 +321,10 @@ void load_obj( const std::string& path, Shape& shape ) {
     align_geometry( vertices, uvs, normals, vertex_indices, all_indices, all_faces );
 
     // Update output
-    shape.mesh.vertices = vertices;
-    shape.mesh.uvs = uvs;
-    shape.mesh.normals = normals;
-    shape.mesh.indices = vertex_indices;
+    shape.vertices = vertices;
+    shape.uvs = uvs;
+    shape.normals = normals;
+    shape.indices = vertex_indices;
 
 }
 

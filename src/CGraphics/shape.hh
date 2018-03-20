@@ -10,14 +10,17 @@ namespace concussion {
 
 namespace graphics {
 
-//struct Shape {
-//    std::vector< GLfloat > vertices;
-//    std::vector< GLfloat > normals;
-//    std::vector< GLfloat > uvs;
-//    std::vector< GLuint > indices;
-//};
-//
-//typedef std::shared_ptr< Shape > ShapePtr;
+typedef std::vector< GLfloat > Vertices;
+typedef std::vector< GLfloat > Normals;
+typedef std::vector< GLfloat > Uvs;
+typedef std::vector< GLuint > Indices;
+
+struct Shape {
+    Vertices vertices;
+    Normals normals;
+    Uvs uvs;
+    Indices indices;
+};
 
 } // namespace graphics
 

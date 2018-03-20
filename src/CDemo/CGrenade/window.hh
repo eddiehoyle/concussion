@@ -31,11 +31,9 @@ public:
     double time() const;
     void request_quit();
 
-    int width() const;
-    int height() const;
-    glm::ivec2 viewport() const;
-
-//    void to_device_coords( int x, int y, float& o_x, float& o_y ) const;
+    unsigned int width() const;
+    unsigned int height() const;
+    glm::uvec2 viewport() const;
 
 private:
     bool m_initialised;

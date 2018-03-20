@@ -20,16 +20,16 @@ void cube( float size,
            std::vector< GLuint >& o_indices ) {
 
     bool result;
-    const std::string cube_path = io::find_resource( "cone.obj", result );
+    const std::string cube_path = io::find_resource( "cube.obj", result );
     CNC_ASSERT( result );
 
     Shape shape;
     load_obj( cube_path, shape );
 
-    o_vertices = shape.mesh.vertices;
-    o_normals = shape.mesh.normals;
-    o_uvs = shape.mesh.uvs;
-    o_indices = shape.mesh.indices;
+    o_vertices = shape.vertices;
+    o_normals = shape.normals;
+    o_uvs = shape.uvs;
+    o_indices = shape.indices;
 }
 
 void sphere( float radius,
@@ -39,16 +39,16 @@ void sphere( float radius,
              std::vector< GLuint >& o_indices ) {
 
     bool result;
-    const std::string cube_path = io::find_resource( "direction.obj", result );
+    const std::string cube_path = io::find_resource( "sphere.obj", result );
     CNC_ASSERT( result );
 
     Shape shape;
     load_obj( cube_path, shape );
 
-    o_vertices = shape.mesh.vertices;
-    o_normals = shape.mesh.normals;
-    o_uvs = shape.mesh.uvs;
-    o_indices = shape.mesh.indices;
+    o_vertices = shape.vertices;
+    o_normals = shape.normals;
+    o_uvs = shape.uvs;
+    o_indices = shape.indices;
 }
 
 void circle( float radius,

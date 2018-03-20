@@ -78,9 +78,9 @@ void Window::set_title( const std::string& title ) {
     glfwSetWindowTitle( m_handle, title.c_str() );
 }
 
-void Window::update_begin( Update* input ) {
+void Window::update_begin( Update* update ) {
     CNC_ASSERT( m_initialised );
-    CNC_ASSERT( input != nullptr );
+    CNC_ASSERT( update != nullptr );
 
     glEnable( GL_DEPTH_TEST );
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
@@ -96,8 +96,9 @@ void Window::update_begin( Update* input ) {
     // Mouse pos is from bottom left
     double x, y;
     glfwGetCursorPos( m_handle, &x, &y );
-    input->position = glm::vec2( x, height() - y );
-    input->pressed = glfwGetMouseButton( m_handle, GLFW_MOUSE_BUTTON_1 ) == GLFW_PRESS;
+    update->position = glm::vec2( x, height() - y );
+    update->pressed = glfwGetMouseButton( m_handle, GLFW_MOUSE_BUTTON_1 ) == GLFW_PRESS;
+    update->time = time();
 }
 
 void Window::update_end() {
@@ -113,24 +114,19 @@ void Window::request_quit() {
     glfwSetWindowShouldClose( m_handle, GLFW_TRUE );
 }
 
-int Window::width() const {
+unsigned int Window::width() const {
     return viewport().x;
 }
 
-int Window::height() const {
+unsigned int Window::height() const {
     return viewport().y;
 }
 
-glm::ivec2 Window::viewport() const {
+glm::uvec2 Window::viewport() const {
     glm::ivec2 viewport;
     glfwGetWindowSize( m_handle, &viewport.x, &viewport.y );
     return viewport;
 }
-
-//void Window::to_device_coords( int i_x, int i_y, float& o_x, float& o_y ) const {
-//    o_x = clamp( ( 2.0f * i_x ) / width() - 1, -1, 1 );
-//    o_y = -clamp( ( 2.0f * i_y ) / height() - 1, -1, 1 );
-//}
 
 Window::~Window() {
     CNC_ASSERT( m_initialised );

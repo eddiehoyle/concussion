@@ -17,6 +17,23 @@ void buffer_data( GLuint index,
                   const std::vector< GLfloat >& data );
 void unbind_vao();
 
+class BufferObject {
+public:
+    BufferObject( GLenum target, GLsizei size, GLenum usage );
+    ~BufferObject();
+    void send( GLvoid* data );
+    void bind();
+    static void unbind();
+    GLuint id() const;
+
+private:
+    GLuint m_id;
+    GLenum m_target;
+    GLenum m_usage;
+    GLsizei m_size;
+    bool m_allocated;
+};
+
 } // namespace graphics
 
 } // namespace concussion

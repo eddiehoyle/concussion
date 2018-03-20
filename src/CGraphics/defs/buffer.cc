@@ -34,6 +34,40 @@ void unbind_vao() {
     glBindVertexArray( 0 );
 }
 
+BufferObject::BufferObject( GLenum target, GLsizei size, GLenum usage )
+        : m_id( 0 ),
+          m_target( target ),
+          m_size( size ),
+          m_usage( usage ),
+          m_allocated( false ) {
+    glGenBuffers( 1, &m_id );
+    glBindBuffer(m_target, m_id);
+    glBufferData(m_target, m_size, nullptr, m_usage);
+    m_allocated = true;
+}
+
+BufferObject::~BufferObject() {
+    glDeleteBuffers(1, &m_id);
+    m_allocated = false;
+}
+
+GLuint BufferObject::id() const {
+    return m_id;
+}
+
+void BufferObject::send( GLvoid* data ) {
+    glBufferSubData( m_target, 0, m_size, data );
+}
+
+void BufferObject::bind() {
+    glBindBuffer(m_target, m_id);
+}
+
+void BufferObject::unbind() {
+    GLenum targets = GL_ARRAY_BUFFER | GL_ELEMENT_ARRAY_BUFFER;
+    glBindBuffer( targets, 0 );
+}
+
 } // namespace graphics
 
 } // namespace concussion

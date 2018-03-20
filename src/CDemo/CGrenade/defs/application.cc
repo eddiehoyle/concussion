@@ -18,6 +18,8 @@
 
 #include <cmath>
 #include <sstream>
+#include <CGraphics/shape.hh>
+#include <CBase/model.hh>
 
 namespace concussion {
 
@@ -83,63 +85,87 @@ void Application::run() {
     ShaderManager::instance()->compile( grenade_source );
     ShaderManager::instance()->compile( grid_source );
 
-//    // Generate a mesh
-//    std::vector< GLfloat > grenade_vertices;
-//    std::vector< GLuint > grenade_indices;
-//    std::vector< GLfloat > grenade_uvs;
-//    circle( 0.5f, 32, grenade_vertices, grenade_indices, grenade_uvs );
+    // ------------------------------------------------------------ //
 
-    // Generate a mesh
-    std::vector< GLfloat > grenade_vertices;
-    std::vector< GLfloat > grenade_normals;
-    std::vector< GLfloat > grenade_uvs;
-    std::vector< GLuint > grenade_indices;
-//    sphere( 1.0f, 16, 16, grenade_vertices, grenade_normals, grenade_uvs, grenade_indices );
-    cube( 1.0f, grenade_vertices, grenade_normals, grenade_uvs, grenade_indices );
+    bool cube_exists;
+    const std::string cube_path = io::find_resource( "cube.obj", cube_exists );
+    CNC_ASSERT( cube_exists );
+
+    graphics::Shape grenade_shape;
+    load_obj( cube_path, grenade_shape );
 
     // Buffer mesh
     GLuint grenade_vao;
     grenade_vao = create_vao();
     bind_vao( grenade_vao );
-    buffer_indices( grenade_indices );
-    buffer_data( 0, 3, grenade_vertices );
-    buffer_data( 1, 3, grenade_normals );
-    buffer_data( 2, 2, grenade_uvs );
+    buffer_indices( grenade_shape.indices );
+    buffer_data( 0, 3, grenade_shape.vertices );
+    buffer_data( 1, 3, grenade_shape.normals );
+    buffer_data( 2, 2, grenade_shape.uvs );
     unbind_vao();
 
+    bool sphere_exists;
+    const std::string sphere_path = io::find_resource( "sphere.obj", sphere_exists );
+    CNC_ASSERT( cube_exists );
+
+    graphics::Shape sphere_shape;
+    load_obj( sphere_path, sphere_shape );
+
+    // -------------------------------------------------------------------- //
+    // Buffer sphere testing
+
+    GLuint sphere_vao;
+    glGenVertexArrays( 1, &sphere_vao );
+    glBindVertexArray( sphere_vao );
+
+    BufferObject sphere_indices_buffer( GL_ELEMENT_ARRAY_BUFFER, sizeof( GLuint ) * sphere_shape.indices.size(), GL_STATIC_DRAW );
+    sphere_indices_buffer.send( &sphere_shape.indices[0] );
+    BufferObject sphere_vertices_buffer( GL_ARRAY_BUFFER, sizeof( GLfloat ) * sphere_shape.vertices.size(), GL_STATIC_DRAW );
+    sphere_vertices_buffer.send( &sphere_shape.vertices[0] );
+    BufferObject sphere_normals_buffer( GL_ARRAY_BUFFER, sizeof( GLfloat ) * sphere_shape.normals.size(), GL_STATIC_DRAW );
+    sphere_normals_buffer.send( &sphere_shape.normals[0] );
+    BufferObject sphere_uvs_buffer( GL_ARRAY_BUFFER, sizeof( GLfloat ) * sphere_shape.uvs.size(), GL_STATIC_DRAW );
+    sphere_uvs_buffer.send( &sphere_shape.uvs[0] );
+
+    sphere_vertices_buffer.bind();
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr );
+    sphere_normals_buffer.bind();
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    sphere_uvs_buffer.bind();
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+    glBindVertexArray( 0 );
+
+    // -------------------------------------------------------------------- //
+    // Currently works
+//
+//    // Buffer mesh
+//    GLuint sphere_vao;
+//    sphere_vao = create_vao();
+//    bind_vao( sphere_vao );
+//    buffer_indices( sphere_shape.indices );
+//    buffer_data( 0, 3, sphere_shape.vertices );
+//    buffer_data( 1, 3, sphere_shape.normals );
+//    buffer_data( 2, 2, sphere_shape.uvs );
+//    unbind_vao();
+
+    // -------------------------------------------------------------------- //
+
+
     // Generate a mesh
-    std::vector< GLfloat > direction_vertices;
-    std::vector< GLfloat > direction_normals;
-    std::vector< GLfloat > direction_uvs;
-    std::vector< GLuint > direction_indices;
-//    sphere( 1.0f, 16, 16, direction_vertices, direction_normals, direction_uvs, direction_indices );
-    sphere( 1.0f, direction_vertices, direction_normals, direction_uvs, direction_indices );
-
-    // Buffer mesh
-    GLuint direction_vao;
-    direction_vao = create_vao();
-    bind_vao( direction_vao );
-    buffer_indices( direction_indices );
-    buffer_data( 0, 3, direction_vertices );
-    buffer_data( 1, 3, direction_normals );
-    buffer_data( 2, 2, direction_uvs );
-    unbind_vao();
-
-
-    // Generate a mesh
-    std::vector< GLfloat > grid_vertices;
-    std::vector< GLuint > grid_indices;
-    std::vector< GLfloat > grid_uvs;
-    square( 1.0f, grid_vertices, grid_indices, grid_uvs );
+    graphics::Shape grid_shape;
+    square( 1.0f, grid_shape.vertices, grid_shape.indices, grid_shape.uvs );
 
     // Buffer mesh
     GLuint grid_vao;
     grid_vao = create_vao();
     bind_vao( grid_vao );
-    buffer_indices( grid_indices );
-    buffer_data( 0, 3, grid_vertices );
-    buffer_data( 1, 2, grid_uvs );
+    buffer_indices( grid_shape.indices );
+    buffer_data( 0, 3, grid_shape.vertices );
+    buffer_data( 1, 2, grid_shape.uvs );
     unbind_vao();
+
+    // ------------------------------------------------------------ //
 
     // Define some uniforms
     glm::mat4 projection = glm::perspectiveFov( 70.0f, 640.0f, 480.0f, 1.0f, 1000.0f );
@@ -155,18 +181,19 @@ void Application::run() {
     glm::mat4 grenade_model = glm::translate( glm::mat4( 1 ), glm::vec3( 1, 0, 0 ) );
     glm::vec3 grenade_move;
 
-    glm::mat4 direction_rotate = glm::mat4( 1 );
-    glm::mat4 direction_scale = glm::scale( glm::mat4( 1 ), glm::vec3( 5, 5, 5 ) );
-    glm::mat4 direction_model( 1 );
+    glm::mat4 sphere_rotate = glm::mat4( 1 );
+    glm::mat4 sphere_scale = glm::scale( glm::mat4( 1 ), glm::vec3( 5, 5, 5 ) );
+    glm::mat4 sphere_model( 1 );
 
     bool is_thrown = false;
     double scale = 3.0;
 
     glm::vec2 tap_press;
     glm::vec2 tap_release;
+    glm::vec2 origin( m_window->width() / 2, m_window->height() / 2 );
 
     double grenade_velocity = 120.0;
-    double gravity = 4.8; // Low gravity
+    double gravity = 9.8; // Low gravity
     double rotation_velocity = 150.0;
     double rotation_speed = 0;
 
@@ -188,44 +215,18 @@ void Application::run() {
         float sin_zoom = -(std::sin( value ) - 3 ) * 25 + 25;
         glm::mat4 view = glm::lookAt( glm::vec3( 0, 0, 80 ), glm::vec3( 0, 0, 1 ), glm::vec3( 0, 1, 0 ) );
 
-//        if ( update.pressed ) {
-//
-//            const glm::vec3 ray_world = compute_world_ray( m_window->viewport(),
-//                                                           update.position,
-//                                                           view,
-//                                                           projection );
-//
-//            glm::vec3 intersection( 0, 0, 0 );
-//            rayPlaneIntersect( glm::vec3( 0, 0, 0 ),
-//                               glm::vec3( 0, 0, -1 ),
-//                               glm::vec3( -view[3] ),
-//                               ray_world,
-//                               &intersection );
-//
-//            grenade_translate = glm::translate( glm::mat4( 1 ), intersection );
-//
-//        }
-//        tap = update.pressed;
-
         if ( !tap && update.pressed ) {
             tap_press = update.position;
             is_thrown = false;
         }
 
-
-
         if ( tap && !update.pressed ) {
 
             tap_release = update.position;
-//            CNC_ERROR << "position=" << glm::to_string( update.position );
-//            CNC_ERROR << "press=" << glm::to_string( tap_press );
-//            CNC_ERROR << "release=" << glm::to_string( tap_release );
-
-            double length = glm::length( tap_release - tap_press );
+            double length = glm::length( tap_release - origin );
             if ( length > 10 ) {
-                glm::vec2 diff( tap_release - tap_press );
+                glm::vec2 diff( tap_release - origin );
                 double angle = std::atan2( diff.y, diff.x );
-                CNC_ERROR << glm::degrees( angle );
 
                 grenade_translate = glm::mat4( 1 );
                 grenade_move = glm::vec3( diff.x, diff.y, 0.0 ) / length * elapsed * grenade_velocity;
@@ -234,12 +235,8 @@ void Application::run() {
                 int sign = diff.x > 0 ? -1 : 1;
                 rotation_speed = 0;
                 rotation_speed = rotation_velocity * elapsed * sign;
-                CNC_ERROR << rotation_velocity;
 
                 is_thrown = true;
-
-                direction_rotate = glm::rotate( glm::mat4( 1 ), (float)angle, glm::vec3(0, 0, 1));
-
             }
         }
         tap = update.pressed;
@@ -258,41 +255,40 @@ void Application::run() {
         glm::mat4 grid_translate = glm::translate( glm::mat4( 1 ), glm::vec3( 0, 0, 0 ) );
         glm::mat4 grid_model = grid_scale * grid_rotate * grid_translate;
 
-        glm::mat4 direction_model = direction_rotate * direction_scale;
-
-        update.time = m_window->time();
-
         ShaderManager::instance()->bind( "grenade" );
         ShaderManager::instance()->load( "u_projection", projection );
         ShaderManager::instance()->load( "u_view", view );
-        ShaderManager::instance()->load( "u_model", direction_model );
 
-        glBindVertexArray( direction_vao );
-        glEnableVertexAttribArray( 0 );
-        glEnableVertexAttribArray( 1 );
-        glEnableVertexAttribArray( 2 );
-        glDrawElements( GL_TRIANGLES, direction_indices.size(), GL_UNSIGNED_INT, 0 );
-        glDisableVertexAttribArray( 0 );
-        glDisableVertexAttribArray( 1 );
-        glDisableVertexAttribArray( 2 );
-        glBindVertexArray( 0 );
+        if ( update.pressed ) {
+            glm::vec2 diff( update.position - origin );
+            double angle = std::atan2( diff.y, diff.x );
+            sphere_rotate = glm::rotate( glm::mat4( 1 ), (float)angle, glm::vec3(0, 0, 1));
+            sphere_model = sphere_rotate * sphere_scale;
 
+            ShaderManager::instance()->load( "u_model", sphere_model );
 
-//        ShaderManager::instance()->bind( "grenade" );
-//        ShaderManager::instance()->load( "u_projection", projection );
-//        ShaderManager::instance()->load( "u_view", view );
+            glBindVertexArray( sphere_vao );
+            glEnableVertexAttribArray( 0 );
+            glEnableVertexAttribArray( 1 );
+            glEnableVertexAttribArray( 2 );
+            glDrawElements( GL_TRIANGLES, sphere_shape.indices.size(), GL_UNSIGNED_INT, 0 );
+            glDisableVertexAttribArray( 0 );
+            glDisableVertexAttribArray( 1 );
+            glDisableVertexAttribArray( 2 );
+            glBindVertexArray( 0 );
+        }
+
         ShaderManager::instance()->load( "u_model", grenade_model );
 
         glBindVertexArray( grenade_vao );
         glEnableVertexAttribArray( 0 );
         glEnableVertexAttribArray( 1 );
         glEnableVertexAttribArray( 2 );
-        glDrawElements( GL_TRIANGLES, grenade_indices.size(), GL_UNSIGNED_INT, 0 );
+        glDrawElements( GL_TRIANGLES, grenade_shape.indices.size(), GL_UNSIGNED_INT, 0 );
         glDisableVertexAttribArray( 0 );
         glDisableVertexAttribArray( 1 );
         glDisableVertexAttribArray( 2 );
         glBindVertexArray( 0 );
-
 
         ShaderManager::instance()->unbind();
 
@@ -307,7 +303,7 @@ void Application::run() {
         glBindVertexArray( grid_vao );
         glEnableVertexAttribArray( 0 );
         glEnableVertexAttribArray( 1 );
-        glDrawElements( GL_TRIANGLES, grid_indices.size(), GL_UNSIGNED_INT, 0 );
+        glDrawElements( GL_TRIANGLES, grid_shape.indices.size(), GL_UNSIGNED_INT, 0 );
         glDisableVertexAttribArray( 0 );
         glDisableVertexAttribArray( 1 );
         glBindVertexArray( 0 );
