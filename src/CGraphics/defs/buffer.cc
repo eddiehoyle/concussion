@@ -34,39 +34,63 @@ void unbind_vao() {
     glBindVertexArray( 0 );
 }
 
-BufferObject::BufferObject( GLenum target, GLsizei size, GLenum usage )
-        : m_id( 0 ),
-          m_target( target ),
-          m_size( size ),
-          m_usage( usage ),
-          m_allocated( false ) {
+// ------------------------------------------------------------------------------------------------------ //
+
+ElementArrayBuffer::ElementArrayBuffer( GLsizei size, GLenum usage ) {
     glGenBuffers( 1, &m_id );
-    glBindBuffer(m_target, m_id);
-    glBufferData(m_target, m_size, nullptr, m_usage);
-    m_allocated = true;
+    glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, m_id );
+    glBufferData( GL_ELEMENT_ARRAY_BUFFER, m_size, nullptr, m_usage );
 }
 
-BufferObject::~BufferObject() {
-    glDeleteBuffers(1, &m_id);
-    m_allocated = false;
+ElementArrayBuffer::~ElementArrayBuffer() {
+    glDeleteBuffers( 1, &m_id );
 }
 
-GLuint BufferObject::id() const {
-    return m_id;
+void ElementArrayBuffer::send( GLvoid* data, GLsizeiptrARB size, GLintptrARB offset ) {
+    glBufferSubData( GL_ELEMENT_ARRAY_BUFFER, offset, size, data );
 }
 
-void BufferObject::send( GLvoid* data ) {
-    glBufferSubData( m_target, 0, m_size, data );
+// ------------------------------------------------------------------------------------------------------ //
+
+AttributeArrayBuffer::AttributeArrayBuffer( GLsizei coordinates,
+                                            GLsizei size,
+                                            GLenum type,
+                                            GLenum normalized,
+                                            GLenum usage ) {
+    glGenBuffers( 1, &m_id );
+    glBindBuffer( GL_ARRAY_BUFFER, m_id );
+    glBufferData( GL_ARRAY_BUFFER, m_size, nullptr, m_usage );
 }
 
-void BufferObject::bind() {
-    glBindBuffer(m_target, m_id);
+AttributeArrayBuffer::~AttributeArrayBuffer() {
+    glDeleteBuffers( 1, &m_id );
 }
 
-void BufferObject::unbind() {
-    GLenum targets = GL_ARRAY_BUFFER | GL_ELEMENT_ARRAY_BUFFER;
-    glBindBuffer( targets, 0 );
+GLenum AttributeArrayBuffer::get_type() const {
+    return m_type;
 }
+
+bool AttributeArrayBuffer::is_normalized() const {
+    return m_normalized;
+}
+
+GLsizei AttributeArrayBuffer::get_coordinates() const {
+    return m_coordinates;
+}
+
+void AttributeArrayBuffer::send( GLvoid* data, GLsizeiptrARB size, GLintptrARB offset ) {
+    glBufferSubData( GL_ARRAY_BUFFER, offset, size, data );
+}
+
+void AttributeArrayBuffer::bind() {
+    glBindBuffer( GL_ARRAY_BUFFER, m_id );
+}
+
+void AttributeArrayBuffer::unbind() {
+    glBindBuffer( GL_ARRAY_BUFFER, 0 );
+}
+
+
 
 } // namespace graphics
 

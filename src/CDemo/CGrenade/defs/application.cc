@@ -114,26 +114,56 @@ void Application::run() {
     // -------------------------------------------------------------------- //
     // Buffer sphere testing
 
+//    GLuint sphere_vao;
+//    glGenVertexArrays( 1, &sphere_vao );
+//    glBindVertexArray( sphere_vao );
+//
+//    BufferObject sphere_indices_buffer( GL_ELEMENT_ARRAY_BUFFER, sizeof( GLuint ) * sphere_shape.indices.size(), GL_STATIC_DRAW );
+//    sphere_indices_buffer.send( &sphere_shape.indices[0] );
+//    BufferObject sphere_vertices_buffer( GL_ARRAY_BUFFER, sizeof( GLfloat ) * sphere_shape.vertices.size(), GL_STATIC_DRAW );
+//    sphere_vertices_buffer.send( &sphere_shape.vertices[0] );
+//    BufferObject sphere_normals_buffer( GL_ARRAY_BUFFER, sizeof( GLfloat ) * sphere_shape.normals.size(), GL_STATIC_DRAW );
+//    sphere_normals_buffer.send( &sphere_shape.normals[0] );
+//    BufferObject sphere_uvs_buffer( GL_ARRAY_BUFFER, sizeof( GLfloat ) * sphere_shape.uvs.size(), GL_STATIC_DRAW );
+//    sphere_uvs_buffer.send( &sphere_shape.uvs[0] );
+//
+//    sphere_vertices_buffer.bind();
+//    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr );
+//    sphere_normals_buffer.bind();
+//    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+//    sphere_uvs_buffer.bind();
+//    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+//
+//    glBindVertexArray( 0 );
+
+    // -------------------------------------------------------------------- //
+
     GLuint sphere_vao;
     glGenVertexArrays( 1, &sphere_vao );
     glBindVertexArray( sphere_vao );
 
-    BufferObject sphere_indices_buffer( GL_ELEMENT_ARRAY_BUFFER, sizeof( GLuint ) * sphere_shape.indices.size(), GL_STATIC_DRAW );
-    sphere_indices_buffer.send( &sphere_shape.indices[0] );
-    BufferObject sphere_vertices_buffer( GL_ARRAY_BUFFER, sizeof( GLfloat ) * sphere_shape.vertices.size(), GL_STATIC_DRAW );
-    sphere_vertices_buffer.send( &sphere_shape.vertices[0] );
-    BufferObject sphere_normals_buffer( GL_ARRAY_BUFFER, sizeof( GLfloat ) * sphere_shape.normals.size(), GL_STATIC_DRAW );
-    sphere_normals_buffer.send( &sphere_shape.normals[0] );
-    BufferObject sphere_uvs_buffer( GL_ARRAY_BUFFER, sizeof( GLfloat ) * sphere_shape.uvs.size(), GL_STATIC_DRAW );
-    sphere_uvs_buffer.send( &sphere_shape.uvs[0] );
+    ElementArrayBuffer* sphere_indices_buffer = new ElementArrayBuffer( sizeof( GLuint ) * sphere_shape.indices.size(), GL_STATIC_DRAW );
+    sphere_indices_buffer->send( &sphere_shape.indices[0], sizeof( GLuint ) * sphere_shape.indices.size(), 0 );
+    AttributeArrayBuffer* sphere_vertices_buffer = new AttributeArrayBuffer( 3, sizeof( GLfloat ) * sphere_shape.vertices.size(), GL_FLOAT, GL_FALSE, GL_STATIC_DRAW );
+    sphere_vertices_buffer->send( &sphere_shape.vertices[0], sizeof( GLfloat ) * sphere_shape.vertices.size(), 0 );
+    AttributeArrayBuffer* sphere_normals_buffer = new AttributeArrayBuffer( 3, sizeof( GLfloat ) * sphere_shape.normals.size(), GL_FLOAT, GL_FALSE, GL_STATIC_DRAW );
+    sphere_normals_buffer->send( &sphere_shape.normals[0], sizeof( GLfloat ) * sphere_shape.normals.size(), 0 );
+    AttributeArrayBuffer* sphere_uvs_buffer = new AttributeArrayBuffer( 2, sizeof( GLfloat ) * sphere_shape.uvs.size(), GL_FLOAT, GL_FALSE, GL_STATIC_DRAW );
+    sphere_uvs_buffer->send( &sphere_shape.uvs[0], sizeof( GLfloat ) * sphere_shape.uvs.size(), 0 );
 
-    sphere_vertices_buffer.bind();
+    // These should happen in a Sphere class automatically.
+//    Mesh sphere_mesh;
+//    sphere_mesh.attach( sphere_indices_buffer );
+//    sphere_mesh.attach( 0, sphere_vertices_buffer );
+//    sphere_mesh.attach( 1, sphere_normals_buffer );
+//    sphere_mesh.attach( 2, sphere_uvs_buffer );
+
+    sphere_vertices_buffer->bind();
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr );
-    sphere_normals_buffer.bind();
+    sphere_normals_buffer->bind();
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-    sphere_uvs_buffer.bind();
+    sphere_uvs_buffer->bind();
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
-
     glBindVertexArray( 0 );
 
     // -------------------------------------------------------------------- //
@@ -315,6 +345,11 @@ void Application::run() {
         m_window->update_end();
 
     }
+
+    delete sphere_indices_buffer;
+    delete sphere_vertices_buffer;
+    delete sphere_normals_buffer;
+    delete sphere_uvs_buffer;
 }
 
 }

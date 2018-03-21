@@ -17,22 +17,46 @@ void buffer_data( GLuint index,
                   const std::vector< GLfloat >& data );
 void unbind_vao();
 
-class BufferObject {
+// ------------------------------------------------------------------------------------------------------ //
+
+class ElementArrayBuffer {
 public:
-    BufferObject( GLenum target, GLsizei size, GLenum usage );
-    ~BufferObject();
-    void send( GLvoid* data );
+    ElementArrayBuffer( GLsizei size, GLenum usage );
+    ~ElementArrayBuffer ();
+    void send( GLvoid* data, GLsizeiptrARB size, GLintptrARB offset );
+private:
+    GLuint m_id;
+    GLsizei m_size;
+    GLenum m_usage;
+};
+
+// ------------------------------------------------------------------------------------------------------ //
+
+class AttributeArrayBuffer {
+public:
+    AttributeArrayBuffer( GLsizei coordinates, GLsizei size, GLenum type, GLenum normalized, GLenum usage );
+    ~AttributeArrayBuffer();
+    void send( GLvoid* data, GLsizeiptrARB size, GLintptrARB offset );
+    GLsizei get_coordinates() const;
+    GLenum get_type() const;
+    bool is_normalized() const;
+
     void bind();
-    static void unbind();
-    GLuint id() const;
+    void unbind();
 
 private:
     GLuint m_id;
-    GLenum m_target;
-    GLenum m_usage;
+    GLsizei m_coordinates;
     GLsizei m_size;
-    bool m_allocated;
+    GLenum m_type;
+    GLenum m_normalized;
+    GLenum m_usage;
 };
+
+// ------------------------------------------------------------------------------------------------------ //
+
+
+// ------------------------------------------------------------------------------------------------------ //
 
 } // namespace graphics
 

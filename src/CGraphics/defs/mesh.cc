@@ -9,6 +9,10 @@
 #include <tiny_obj_loader.h>
 #include <CGraphics/shape.hh>
 
+#include <GL/glew.h>
+
+#include "buffer.hh"
+
 namespace concussion {
 
 namespace graphics {
@@ -234,6 +238,23 @@ void sphere2( float radius,
         o_indices.push_back(baseIndex + i);
         o_indices.push_back(baseIndex + i + 1);
     }
+}
+
+
+void Mesh::attach( ElementArrayBuffer* buffer ) {
+    m_indices = buffer;
+}
+
+void Mesh::attach( GLuint index, AttributeArrayBuffer* buffer ) {
+    buffer->bind();
+    glVertexAttribPointer( index,
+                           buffer->get_coordinates(),
+                           buffer->get_type(),
+                           static_cast< GLboolean >( buffer->is_normalized() ),
+                           0,
+                           nullptr );
+    buffer->unbind();
+    m_attributes.insert( m_attributes.begin() + index, buffer );
 }
 
 } // namespace graphics

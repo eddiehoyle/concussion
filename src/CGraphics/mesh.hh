@@ -49,6 +49,22 @@ void square( float size,
              std::vector< GLfloat >& o_uvs );
 
 
+class ElementArrayBuffer;
+class AttributeArrayBuffer;
+
+class Mesh {
+public:
+    Mesh() = default;
+    virtual ~Mesh() = default;
+    void attach( ElementArrayBuffer* buffer );
+    void attach( GLuint index, AttributeArrayBuffer* buffer );
+protected:
+    ElementArrayBuffer* m_indices;
+    std::vector< AttributeArrayBuffer* > m_attributes;
+};
+
+
+
 } // namespace graphics
 
 } // namespace concussion
