@@ -4,7 +4,7 @@
 #include <GL/glew.h>
 #include <vector>
 
-#include "mesh.hh"
+#include "CGraphics/geometry/mesh.hh"
 
 namespace concussion {
 

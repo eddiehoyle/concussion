@@ -9,7 +9,7 @@ file(GLOB PROJECT_CONFIGS CMakeLists.txt)
 
 add_library(${TARGET_NAME} SHARED
         ${PROJECT_SOURCES}
-        ${PROJECT_HEADERS} defs/intersect.cc intersect.hh defs/material.cc material.hh)
+        ${PROJECT_HEADERS} defs/intersect.cc intersect.hh defs/material.cc material.hh defs/geometry/cube.cc geometry/cube.hh)
 target_include_directories(${TARGET_NAME} PRIVATE
         ${TARGET_INCLUDE_DIR})
 target_compile_definitions(${TARGET_NAME} PRIVATE

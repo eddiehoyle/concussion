@@ -9,7 +9,7 @@
 #include <CGraphics/manager.hh>
 #include <CGraphics/buffer.hh>
 #include <CGraphics/intersect.hh>
-#include <CGraphics/mesh.hh>
+#include <CGraphics/geometry/mesh.hh>
 #include <CBase/input.hh>
 
 #define GLM_ENABLE_EXPERIMENTAL
@@ -20,6 +20,7 @@
 #include <sstream>
 #include <CGraphics/shape.hh>
 #include <CBase/model.hh>
+#include <CGraphics/geometry/cube.hh>
 
 namespace concussion {
 
@@ -138,18 +139,18 @@ void Application::run() {
 
     // -------------------------------------------------------------------- //
 
-    GLuint sphere_vao;
-    glGenVertexArrays( 1, &sphere_vao );
-    glBindVertexArray( sphere_vao );
+//    GLuint sphere_vao;
+//    glGenVertexArrays( 1, &sphere_vao );
+//    glBindVertexArray( sphere_vao );
 
-    ElementArrayBuffer* sphere_indices_buffer = new ElementArrayBuffer( sizeof( GLuint ) * sphere_shape.indices.size(), GL_STATIC_DRAW );
-    sphere_indices_buffer->send( &sphere_shape.indices[0], sizeof( GLuint ) * sphere_shape.indices.size(), 0 );
-    AttributeArrayBuffer* sphere_vertices_buffer = new AttributeArrayBuffer( 3, sizeof( GLfloat ) * sphere_shape.vertices.size(), GL_FLOAT, GL_FALSE, GL_STATIC_DRAW );
-    sphere_vertices_buffer->send( &sphere_shape.vertices[0], sizeof( GLfloat ) * sphere_shape.vertices.size(), 0 );
-    AttributeArrayBuffer* sphere_normals_buffer = new AttributeArrayBuffer( 3, sizeof( GLfloat ) * sphere_shape.normals.size(), GL_FLOAT, GL_FALSE, GL_STATIC_DRAW );
-    sphere_normals_buffer->send( &sphere_shape.normals[0], sizeof( GLfloat ) * sphere_shape.normals.size(), 0 );
-    AttributeArrayBuffer* sphere_uvs_buffer = new AttributeArrayBuffer( 2, sizeof( GLfloat ) * sphere_shape.uvs.size(), GL_FLOAT, GL_FALSE, GL_STATIC_DRAW );
-    sphere_uvs_buffer->send( &sphere_shape.uvs[0], sizeof( GLfloat ) * sphere_shape.uvs.size(), 0 );
+//    ElementArrayBuffer* sphere_indices_buffer = new ElementArrayBuffer( sizeof( GLuint ) * sphere_shape.indices.size(), GL_STATIC_DRAW );
+//    sphere_indices_buffer->send( &sphere_shape.indices[0], sizeof( GLuint ) * sphere_shape.indices.size(), 0 );
+//    AttributeArrayBuffer* sphere_vertices_buffer = new AttributeArrayBuffer( 3, sizeof( GLfloat ) * sphere_shape.vertices.size(), GL_FLOAT, GL_FALSE, GL_STATIC_DRAW );
+//    sphere_vertices_buffer->send( &sphere_shape.vertices[0], sizeof( GLfloat ) * sphere_shape.vertices.size(), 0 );
+//    AttributeArrayBuffer* sphere_normals_buffer = new AttributeArrayBuffer( 3, sizeof( GLfloat ) * sphere_shape.normals.size(), GL_FLOAT, GL_FALSE, GL_STATIC_DRAW );
+//    sphere_normals_buffer->send( &sphere_shape.normals[0], sizeof( GLfloat ) * sphere_shape.normals.size(), 0 );
+//    AttributeArrayBuffer* sphere_uvs_buffer = new AttributeArrayBuffer( 2, sizeof( GLfloat ) * sphere_shape.uvs.size(), GL_FLOAT, GL_FALSE, GL_STATIC_DRAW );
+//    sphere_uvs_buffer->send( &sphere_shape.uvs[0], sizeof( GLfloat ) * sphere_shape.uvs.size(), 0 );
 
     // These should happen in a Sphere class automatically.
 //    Mesh sphere_mesh;
@@ -158,29 +159,20 @@ void Application::run() {
 //    sphere_mesh.attach( 1, sphere_normals_buffer );
 //    sphere_mesh.attach( 2, sphere_uvs_buffer );
 
-    sphere_vertices_buffer->bind();
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr );
-    sphere_normals_buffer->bind();
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-    sphere_uvs_buffer->bind();
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
-    glBindVertexArray( 0 );
-
-    // -------------------------------------------------------------------- //
-    // Currently works
-//
-//    // Buffer mesh
-//    GLuint sphere_vao;
-//    sphere_vao = create_vao();
-//    bind_vao( sphere_vao );
-//    buffer_indices( sphere_shape.indices );
-//    buffer_data( 0, 3, sphere_shape.vertices );
-//    buffer_data( 1, 3, sphere_shape.normals );
-//    buffer_data( 2, 2, sphere_shape.uvs );
-//    unbind_vao();
+//    sphere_vertices_buffer->bind();
+//    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr );
+//    sphere_normals_buffer->bind();
+//    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+//    sphere_uvs_buffer->bind();
+//    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+//    glBindVertexArray( 0 );
 
     // -------------------------------------------------------------------- //
 
+    Cube cube;
+    CNC_ERROR << "vao=" << cube.vao() << ", count=" << cube.count();
+
+    // -------------------------------------------------------------------- //
 
     // Generate a mesh
     graphics::Shape grid_shape;
@@ -297,11 +289,11 @@ void Application::run() {
 
             ShaderManager::instance()->load( "u_model", sphere_model );
 
-            glBindVertexArray( sphere_vao );
+            glBindVertexArray( cube.vao() );
             glEnableVertexAttribArray( 0 );
             glEnableVertexAttribArray( 1 );
             glEnableVertexAttribArray( 2 );
-            glDrawElements( GL_TRIANGLES, sphere_shape.indices.size(), GL_UNSIGNED_INT, 0 );
+            glDrawElements( GL_TRIANGLES, cube.count(), GL_UNSIGNED_INT, 0 );
             glDisableVertexAttribArray( 0 );
             glDisableVertexAttribArray( 1 );
             glDisableVertexAttribArray( 2 );
@@ -346,10 +338,10 @@ void Application::run() {
 
     }
 
-    delete sphere_indices_buffer;
-    delete sphere_vertices_buffer;
-    delete sphere_normals_buffer;
-    delete sphere_uvs_buffer;
+//    delete sphere_indices_buffer;
+//    delete sphere_vertices_buffer;
+//    delete sphere_normals_buffer;
+//    delete sphere_uvs_buffer;
 }
 
 }

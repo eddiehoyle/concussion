@@ -54,11 +54,18 @@ class AttributeArrayBuffer;
 
 class Mesh {
 public:
-    Mesh() = default;
-    virtual ~Mesh() = default;
+    Mesh();
+    virtual ~Mesh();
+    GLuint vao() const;
+    GLuint count() const;
+    void bind();
+    void unbind();
+protected:
     void attach( ElementArrayBuffer* buffer );
     void attach( GLuint index, AttributeArrayBuffer* buffer );
-protected:
+
+    GLuint m_vao;
+    GLuint m_count;
     ElementArrayBuffer* m_indices;
     std::vector< AttributeArrayBuffer* > m_attributes;
 };

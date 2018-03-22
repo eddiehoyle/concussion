@@ -36,7 +36,10 @@ void unbind_vao() {
 
 // ------------------------------------------------------------------------------------------------------ //
 
-ElementArrayBuffer::ElementArrayBuffer( GLsizei size, GLenum usage ) {
+ElementArrayBuffer::ElementArrayBuffer( GLsizei size, GLenum usage )
+        : m_id( 0 ),
+          m_size( size ),
+          m_usage( usage ) {
     glGenBuffers( 1, &m_id );
     glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, m_id );
     glBufferData( GL_ELEMENT_ARRAY_BUFFER, m_size, nullptr, m_usage );
@@ -56,7 +59,13 @@ AttributeArrayBuffer::AttributeArrayBuffer( GLsizei coordinates,
                                             GLsizei size,
                                             GLenum type,
                                             GLenum normalized,
-                                            GLenum usage ) {
+                                            GLenum usage )
+        : m_id( 0 ),
+          m_coordinates( coordinates ),
+          m_size( size ),
+          m_type( type ),
+          m_normalized( normalized ),
+          m_usage( usage ) {
     glGenBuffers( 1, &m_id );
     glBindBuffer( GL_ARRAY_BUFFER, m_id );
     glBufferData( GL_ARRAY_BUFFER, m_size, nullptr, m_usage );

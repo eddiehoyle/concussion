@@ -3,7 +3,7 @@
 #include <tiny_obj_loader.h>
 #include <CBase/resource.hh>
 #include <CBase/io.hh>
-#include "mesh.hh"
+#include "CGraphics/geometry/mesh.hh"
 #include <CBase/model.hh>
 
 #include <tiny_obj_loader.h>
@@ -240,6 +240,35 @@ void sphere2( float radius,
     }
 }
 
+
+
+Mesh::Mesh()
+        : m_vao( 0 ),
+          m_count( 0 ),
+          m_indices( nullptr ),
+          m_attributes() {
+    glGenVertexArrays( 1, &m_vao );
+}
+
+Mesh::~Mesh() {
+    glDeleteVertexArrays( 1, &m_vao );
+}
+
+GLuint Mesh::vao() const {
+    return m_vao;
+}
+
+GLuint Mesh::count() const {
+    return m_count;
+}
+
+void Mesh::bind() {
+    glBindVertexArray( m_vao );
+}
+
+void Mesh::unbind() {
+    glBindVertexArray( 0 );
+}
 
 void Mesh::attach( ElementArrayBuffer* buffer ) {
     m_indices = buffer;
