@@ -240,8 +240,6 @@ void sphere2( float radius,
     }
 }
 
-
-
 Mesh::Mesh()
         : m_vao( 0 ),
           m_count( 0 ),
@@ -254,12 +252,20 @@ Mesh::~Mesh() {
     glDeleteVertexArrays( 1, &m_vao );
 }
 
-GLuint Mesh::vao() const {
+GLuint Mesh::get_vao() const {
     return m_vao;
 }
 
-GLuint Mesh::count() const {
+GLuint Mesh::get_indices_count() const {
     return m_count;
+}
+
+std::set< GLuint > Mesh::get_attributes() const {
+    std::set< GLuint > attributes;
+    for ( const auto& attribute : m_attributes ) {
+        attributes.insert( attribute.first );
+    }
+    return attributes;
 }
 
 void Mesh::bind() {
@@ -275,6 +281,7 @@ void Mesh::attach( ElementArrayBuffer* buffer ) {
 }
 
 void Mesh::attach( GLuint index, AttributeArrayBuffer* buffer ) {
+    CNC_ASSERT( m_attributes.find( index ) == m_attributes.end() );
     buffer->bind();
     glVertexAttribPointer( index,
                            buffer->get_coordinates(),
@@ -283,7 +290,7 @@ void Mesh::attach( GLuint index, AttributeArrayBuffer* buffer ) {
                            0,
                            nullptr );
     buffer->unbind();
-    m_attributes.insert( m_attributes.begin() + index, buffer );
+    m_attributes[ index ] = buffer;
 }
 
 } // namespace graphics

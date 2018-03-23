@@ -7,6 +7,7 @@
 #include <vector>
 #include <map>
 #include <memory>
+#include <set>
 
 namespace concussion {
 
@@ -56,8 +57,28 @@ class Mesh {
 public:
     Mesh();
     virtual ~Mesh();
-    GLuint vao() const;
-    GLuint count() const;
+
+    virtual void draw() {
+        glBindVertexArray( get_vao() );
+        for ( const auto& attribute : get_attributes() ) {
+            glEnableVertexAttribArray( attribute );
+        }
+//        glDrawElements( GL_TRIANGLES, aimer.get_indices_count(), GL_UNSIGNED_INT, 0 );
+        m_drawFunc( get_indices_count() );
+        for ( const auto& attribute : get_attributes() ) {
+            glDisableVertexAttribArray( attribute );
+        }
+        glBindVertexArray( 0 );
+    }
+
+    void setDrawFunc( std::function< void( GLuint ) > func ) {
+        m_drawFunc = func;
+    }
+
+    GLuint get_vao() const;
+    GLuint get_indices_count() const;
+    std::set< GLuint > get_attributes() const;
+
     void bind();
     void unbind();
 protected:
@@ -67,7 +88,9 @@ protected:
     GLuint m_vao;
     GLuint m_count;
     ElementArrayBuffer* m_indices;
-    std::vector< AttributeArrayBuffer* > m_attributes;
+    std::map< GLuint, AttributeArrayBuffer* > m_attributes;
+
+    std::function< void( GLuint ) > m_drawFunc;
 };
 
 

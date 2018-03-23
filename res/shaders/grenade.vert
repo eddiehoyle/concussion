@@ -18,7 +18,6 @@ void main( void ) {
     gl_Position = u_projection * u_view * u_model * vec4( i_position, 1.0 );
 
     // Transient
-    t_normal = ( transpose( inverse( u_model ) ) * vec4( i_normal, 0.0 ) ).xyz;
-    t_normal = normalize( t_normal );
+    t_normal = normalize( transpose( inverse( u_model ) ) * vec4( i_normal, 0.0 ) ).xyz;
     t_uv = i_uv;
 }

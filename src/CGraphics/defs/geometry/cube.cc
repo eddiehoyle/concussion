@@ -12,6 +12,10 @@ namespace concussion {
 namespace graphics {
 
 
+void drawCube( GLuint indices_count ) {
+    glDrawElements( GL_TRIANGLES, indices_count, GL_UNSIGNED_INT, 0 );
+}
+
 Cube::Cube()
         : Mesh() {
 
@@ -41,6 +45,8 @@ Cube::Cube()
     attach( 2, uvs_buffer );
 
     unbind();
+
+    setDrawFunc( drawCube );
 }
 
 } // namespace graphics
