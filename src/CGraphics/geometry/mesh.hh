@@ -93,6 +93,7 @@ protected:
     std::function< void( GLuint ) > m_drawFunc;
 };
 
+using MeshPtr = std::shared_ptr< Mesh >;
 
 
 } // namespace graphics

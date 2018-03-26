@@ -21,6 +21,7 @@
 #include <CGraphics/shape.hh>
 #include <CBase/model.hh>
 #include <CGraphics/geometry/cube.hh>
+#include <CGraphics/render.hh>
 
 namespace concussion {
 
@@ -88,8 +89,9 @@ void Application::run() {
 
     // -------------------------------------------------------------------- //
 
-    Cube aimer;
-    Cube grenade;
+    std::shared_ptr< Cube > aimer( new Cube );
+    std::shared_ptr< Cube > grenade( new Cube );
+//    Cube grenade;
 
     // -------------------------------------------------------------------- //
 
@@ -137,6 +139,8 @@ void Application::run() {
     double gravity = 9.8; // Low gravity
     double rotation_velocity = 150.0;
     double rotation_speed = 0;
+
+    StaticRender render;
 
     while ( m_window->open() ) {
 
@@ -214,12 +218,14 @@ void Application::run() {
 
             ShaderManager::instance()->load( "u_model", sphere_model );
 
-            aimer.draw();
+            render.buffer( aimer );
+            render.draw();
         }
 
         ShaderManager::instance()->load( "u_model", grenade_model );
 
-        grenade.draw();
+        render.buffer( grenade );
+        render.draw();
 
         ShaderManager::instance()->unbind();
 

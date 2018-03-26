@@ -4,13 +4,13 @@
 #include <CBase/assert.hh>
 #include <CGraphics/shape.hh>
 #include <CBase/model.hh>
+#include <iostream>
 #include "geometry/cube.hh"
 #include "buffer.hh"
 
 namespace concussion {
 
 namespace graphics {
-
 
 void drawCube( GLuint indices_count ) {
     glDrawElements( GL_TRIANGLES, indices_count, GL_UNSIGNED_INT, 0 );

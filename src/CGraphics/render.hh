@@ -10,12 +10,23 @@ namespace concussion {
 
 namespace graphics {
 
-//class Render {
+class StaticRender {
 
-//public:
-//    Render();
-//    void draw( const std::vector< ShapePtr >& shapes );
-//};
+public:
+    StaticRender() = default;
+    ~StaticRender() = default;
+
+    void buffer( const MeshPtr& mesh );
+    void draw();
+
+private:
+    void bind( const MeshPtr& mesh );
+    void unbind();
+    void enable( const MeshPtr& mesh );
+    void disable( const MeshPtr& mesh );
+
+    std::vector< MeshPtr > m_meshes;
+};
 
 } // namespace graphics
 
