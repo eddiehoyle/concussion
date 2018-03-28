@@ -10,7 +10,7 @@ file(GLOB PROJECT_CONFIGS CMakeLists.txt)
 message(WARNING ${PROJECT_HEADERS})
 add_library(${TARGET_NAME} SHARED
         ${PROJECT_SOURCES}
-        ${PROJECT_HEADERS})
+        ${PROJECT_HEADERS} defs/entity/manager.cc entity/manager.hh defs/entity/entity.cc entity/entity.hh)
 target_include_directories(${TARGET_NAME} PRIVATE
         ${TARGET_INCLUDE_DIR})
 target_compile_definitions(${TARGET_NAME} PRIVATE

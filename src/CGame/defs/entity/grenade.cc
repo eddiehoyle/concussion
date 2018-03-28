@@ -6,16 +6,15 @@ namespace concussion {
 namespace entity {
 
 Grenade::Grenade()
-        : m_shape( nullptr ),
-          m_matrix( 1 ),
+        : m_matrix( 1 ),
+//          m_shape( nullptr ),
           m_primed( false ),
           m_exploding( false ) {
-
 }
 
-graphics::ShapePtr Grenade::get_shape() const {
-    return m_shape;
-}
+//graphics::ShapePtr Grenade::get_shape() const {
+//    return m_shape;
+//}
 
 const glm::mat4& Grenade::get_matrix() const {
     return m_matrix;

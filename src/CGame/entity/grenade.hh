@@ -18,7 +18,7 @@ public:
     Grenade();
     ~Grenade() = default;
 
-    graphics::ShapePtr get_shape() const;
+//    graphics::ShapePtr get_shape() const;
     const glm::mat4& get_matrix() const;
     void prime();
     void release( float angle );
@@ -28,7 +28,7 @@ public:
     bool is_exploding() const;
 
 private:
-    graphics::ShapePtr m_shape;
+//    graphics::ShapePtr m_shape;
     glm::mat4 m_matrix;
     float m_angle;
 
