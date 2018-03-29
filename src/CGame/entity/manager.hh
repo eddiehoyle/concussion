@@ -6,19 +6,14 @@
 
 namespace concussion {
 
-/*
- *
- */
-
 class ComponentManager;
 
 class EntityManager {
 
-    class IEntity {
-    };
+    class IContainer {};
 
     template<class T >
-    class EntityContainer : public IEntity {
+    class EntityContainer : public IContainer {
     public:
         EntityContainer( T type ) : m_type( type ) {}
         T& get() { return m_type; }
@@ -34,7 +29,7 @@ public:
     template<class T, class... ARGS>
     unsigned int create( ARGS&&... args ) {
         unsigned int id = m_entities.size();
-        IEntity* entity = new EntityContainer< T >( T( std::forward<ARGS>(args)... ) );
+        IContainer* entity = new EntityContainer< T >( T( std::forward<ARGS>(args)... ) );
         m_entities[id] = entity;
         return id;
     }
@@ -56,7 +51,7 @@ public:
 
 
 private:
-    std::unordered_map< unsigned int, IEntity* > m_entities;
+    std::unordered_map< unsigned int, IContainer* > m_entities;
 };
 
 } // namespace concussion

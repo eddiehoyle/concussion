@@ -15,7 +15,7 @@ class IEntity {
 private:
 
     // set on create; in EntityManager
-    ComponentManager*	m_componentManager;
+    ComponentManager* m_componentManager;
 
 protected:
 
@@ -23,23 +23,22 @@ protected:
 
 public:
 
-    IEntity();
-    virtual ~IEntity();
-
+    IEntity() = default;
+    virtual ~IEntity() = default;
 
     template<class T>
     T* getComponent() const {
-        return this->m_componentManager->getComponent<T>(this->m_id);
+        return this->m_componentManager->get<T>(this->m_id);
     }
 
     template<class T, class ...P>
-    T* AddComponent(P&&... param) {
-        return this->m_componentManager->addComponent<T>(this->m_id, std::forward<P>(param)...);
+    T* addComponent(P&&... param) {
+        return this->m_componentManager->add<T>(this->m_id, std::forward<P>(param)...);
     }
 
     template<class T>
-    void RemoveComponent() {
-        this->m_componentManager->removeComponent<T>(this->m_id);
+    void removeComponent() {
+        this->m_componentManager->remove<T>(this->m_id);
     }
 };
 
