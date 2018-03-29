@@ -21,6 +21,7 @@ class EntityManager {
     class EntityContainer : public IEntity {
     public:
         EntityContainer( T type ) : m_type( type ) {}
+        T& get() { return m_type; }
     private:
         T m_type;
     };
@@ -38,9 +39,19 @@ public:
         return id;
     }
 
+    template< typename T >
     void destroy( unsigned int id ) {
-        CNC_ASSERT( m_entities.find( id ) != m_entities.end() );
+        auto iter = m_entities.find( id );
+        CNC_ASSERT( iter != m_entities.end() );
         delete m_entities[ id ];
+        m_entities.erase( iter );
+    }
+
+    template< typename T >
+    T* get( unsigned int id ) {
+        auto iter = m_entities.find( id );
+        CNC_ASSERT( iter != m_entities.end() );
+        return &static_cast< EntityContainer< T >* >( iter->second )->get();
     }
 
 
