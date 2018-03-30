@@ -10,7 +10,13 @@ class ComponentManager;
 
 class EntityManager {
 
-    class IContainer {};
+    class IContainer {
+        friend class EntityManager;
+    public:
+        unsigned int id() const { return m_id; }
+    private:
+        unsigned int m_id;
+    };
 
     template<class T >
     class EntityContainer : public IContainer {
@@ -29,8 +35,9 @@ public:
     template<class T, class... ARGS>
     unsigned int create( ARGS&&... args ) {
         unsigned int id = m_entities.size();
-        IContainer* entity = new EntityContainer< T >( T( std::forward<ARGS>(args)... ) );
-        m_entities[id] = entity;
+        IContainer* container = new EntityContainer< T >( T( std::forward<ARGS>(args)... ) );
+        container->m_id = id;
+        m_entities[id] = container;
         return id;
     }
 
