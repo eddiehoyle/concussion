@@ -2,22 +2,19 @@
 #define CONCUSSION_TRANSFORM_HH
 
 #include "component.hh"
+#include <CBase/transform.hh>
 
 #include <glm/glm.hpp>
 
 namespace concussion {
 
-class TransformComponent : public Component< TransformComponent >
-{
-private:
-
-//    Transform	m_Transform;
+class TransformComponent : public Component< TransformComponent > {
 
 public:
 
     TransformComponent() = default;
     explicit TransformComponent( const glm::mat4& transform );
-//    TransformComponent(const Transform& transform);
+//    explicit TransformComponent(const Transform& transform);
 
     virtual ~TransformComponent() = default;
 
@@ -27,6 +24,10 @@ public:
 //
 //    inline const float*		AsFloat() const { return this->m_Transform; }
 //    inline const glm::mat4& AsMat4() const { return this->m_Transform; }
+
+private:
+
+//    Transform	m_Transform;
 
 }; // class TransformComponent
 
