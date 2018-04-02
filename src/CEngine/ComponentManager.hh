@@ -28,7 +28,7 @@ public:
     ~ComponentManager() = default;
 
     template<class T, class... ARGS>
-    unsigned int add( EntityId id, ARGS&&... args ) {
+    unsigned int add( EntityID id, ARGS&&... args ) {
 //        IContainer* component = new ComponentyContainer< T >( T( std::forward<ARGS>(args)... ) );
 //        if ( m_components.find( entity_id ) == m_components.end() ) {
 //            m_components[ entity_id ] = ComponentMap();
@@ -38,7 +38,7 @@ public:
     }
 
     template< typename T >
-    void remove( EntityId id ) {
+    void remove( EntityID id ) {
 //        auto entity_iter = m_components.find( entity_id );
 //        CNC_ASSERT( entity_iter != m_components.end() );
 //        auto component_iter = entity_iter->second.find( component_id );
@@ -51,7 +51,7 @@ public:
     }
 
     template< typename T >
-    T* get( EntityId id ) {
+    T* get( EntityID id ) {
 //        auto entity_iter = m_components.find( entity_id );
 //        CNC_ASSERT( entity_iter != m_components.end() );
 //        auto component_iter = entity_iter->second.find( component_id );

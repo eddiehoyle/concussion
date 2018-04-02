@@ -5,16 +5,20 @@
 #ifndef CONCUSSION_GRENADE_HH
 #define CONCUSSION_GRENADE_HH
 
-#include <CEngine/GameObject.hh>
+#include <CEngine/Entity.hh>
+#include <CEngine/TransformComponent.hh>
 
 namespace concussion {
 
-class Grenade : public GameObject<Grenade> {
+class Grenade : public Entity<Grenade> {
 
 public:
 
-    Grenade();
-    virtual ~Grenade();
+    Grenade()
+    {}
+
+    virtual ~Grenade()
+    {}
 
 private:
 

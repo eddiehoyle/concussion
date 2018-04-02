@@ -3,51 +3,52 @@
 
 #include "Assert.hh"
 #include "Platform.hh"
-#include "ComponentManager.hh"
 
 namespace concussion {
 
-using EntityId		= ObjectID;
-using EntityTypeId	= TypeID;
+class ComponentManager;
+
+using EntityID		= ObjectID;
+using EntityTypeID	= TypeID;
 
 class AbstractEntity {
 
     friend class EntityManager;
 
-private:
-
-    // set on create; in EntityManager
-    ComponentManager* m_componentManager;
-
-protected:
-
-    EntityId m_id;
-
 public:
 
     AbstractEntity() = default;
-    virtual ~AbstractEntity() = default;
+    virtual ~AbstractEntity() {}
+    virtual const EntityTypeID getTypeID() const = 0;
 
-    virtual const EntityTypeId getTypeID() const = 0;
-
-    inline const EntityId getID() const {
+    inline const EntityID getID() const {
         return this->m_id;
     }
 
     template<class T>
     T* getComponent() const {
 //        return this->m_componentManager->get<T>(this->m_id);
+        return nullptr;
     }
 
     template<class T, class ...P>
-    ComponentTypeId addComponent(P&&... param) {
+    T* addComponent(P&&... param) {
 //        return this->m_componentManager->add<T>(this->m_id, std::forward<P>(param)...);
+        return nullptr;
     }
 
     template<class T>
     void removeComponent() {
 //        this->m_componentManager->remove<T>(this->m_id);
     }
+
+private:
+
+    ComponentManager* m_componentManager;
+
+protected:
+
+    EntityID m_id;
 };
 
 } // namespace concussion

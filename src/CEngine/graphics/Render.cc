@@ -1,5 +1,5 @@
 #include "graphics/ShaderManager.hh"
-#include "render.hh"
+#include "Render.hh"
 
 namespace concussion {
 

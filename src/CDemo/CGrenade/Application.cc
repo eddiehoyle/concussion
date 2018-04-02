@@ -30,18 +30,18 @@ Application::Application()
     m_window = std::unique_ptr< Window >( new Window() );
 }
 
-// t: current time, b: begInnIng value, c: change In value, d: duration
-float easeIn( float time, float start, float step, float duration ) {
-    return step*(time/=duration)*time*time*time*time + start;
-}
-
-float easeOut( float time, float start, float step, float duration ) {
-    return step*((time=time/duration-1)*time*time*time*time + 1) + start;
-}
-
-float easeOutExp(float t,float b , float c, float d) {
-    return (t==d) ? b+c : c * (-pow(2, -10 * t/d) + 1) + b;
-}
+//// t: current time, b: begInnIng value, c: change In value, d: duration
+//float easeIn( float time, float start, float step, float duration ) {
+//    return step*(time/=duration)*time*time*time*time + start;
+//}
+//
+//float easeOut( float time, float start, float step, float duration ) {
+//    return step*((time=time/duration-1)*time*time*time*time + 1) + start;
+//}
+//
+//float easeOutExp(float t,float b , float c, float d) {
+//    return (t==d) ? b+c : c * (-pow(2, -10 * t/d) + 1) + b;
+//}
 
 void Application::run() {
 

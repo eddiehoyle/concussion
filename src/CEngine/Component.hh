@@ -2,26 +2,28 @@
 #define CONCUSSION_COMPONENT_HH
 
 #include "AbstractComponent.hh"
-#include "Family.hh"
+#include "ObjectType.hh"
 #include "Platform.hh"
 
 namespace concussion {
 template< class T >
-class Component : public IComponent {
+class Component : public AbstractComponent {
 
 public:
 
-    // This is an id that should be counted somewhere as a unique identifier
-    static const unsigned int STATIC_COMPONENT_TYPE_ID;
+    static const ComponentTypeId COMPONENT_TYPE_ID;
 
-    Component() = default;
-    virtual ~Component() = default;
+public:
+
+    Component()
+    {}
+
+    virtual ~Component()
+    {}
 };
 
-// This private member only exists to force the compiler to create an instance of Component T,
-// which will set its unique identifier.
-template<class T>
-const unsigned int Component<T>::STATIC_COMPONENT_TYPE_ID = internal::FamilyTypeID<IComponent>::get<T>();
+//template<class T>
+//const ComponentTypeId Component<T>::COMPONENT_TYPE_ID = internal::ObjectTypeID<AbstractComponent>::get<T>();
 
 } // namespace concussion
 

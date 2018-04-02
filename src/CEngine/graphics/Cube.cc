@@ -1,8 +1,7 @@
 
-
+#include "graphics/Shape.hh"
 #include "Resource.hh"
 #include "Assert.hh"
-#include "graphics/shape.hh"
 #include "Model.hh"
 #include "Cube.hh"
 #include "Buffer.hh"

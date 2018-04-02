@@ -9,21 +9,21 @@ namespace concussion {
 using ComponentId		= ObjectID;
 using ComponentTypeId	= TypeID;
 
-class IComponent {
+class AbstractComponent {
 
     friend class ComponentManager;
 
 protected:
     unsigned int m_hash;
-    unsigned int m_id;
-    unsigned int m_owner;
+    ComponentId  m_id;
+    EntityID m_owner;
 
 public:
-    IComponent() = default;
-    virtual ~IComponent() = default;
+    AbstractComponent() = default;
+    virtual ~AbstractComponent() {}
 
-    unsigned int id() const { return this->m_id; }
-    unsigned int owner() const { return this->m_owner; }
+    ComponentId id() const { return this->m_id; }
+    EntityID owner() const { return this->m_owner; }
 };
 
 } // namespace component
