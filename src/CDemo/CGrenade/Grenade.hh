@@ -1,7 +1,3 @@
-//
-// Created by Eddie Hoyle on 1/04/18.
-//
-
 #ifndef CONCUSSION_GRENADE_HH
 #define CONCUSSION_GRENADE_HH
 
@@ -11,22 +7,13 @@
 namespace concussion {
 
 class Grenade : public Entity<Grenade> {
-
 public:
-
-    Grenade()
-    {}
-
-    virtual ~Grenade()
-    {}
-
+    Grenade() {}
+    virtual ~Grenade() {}
 private:
-
-    TransformComponent*		m_transform;
-
+    TransformComponent* m_transform;
 };
 
 }
 
-
-#endif //CONCUSSION_GRENADE_HH
+#endif // CONCUSSION_GRENADE_HH

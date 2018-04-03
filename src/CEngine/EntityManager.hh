@@ -10,21 +10,26 @@ class ComponentManager;
 
 class EntityManager {
 
-    class IContainer {
+    class AbstractContainer {
         friend class EntityManager;
     public:
-        unsigned int id() const { return m_id; }
-    private:
-        unsigned int m_id;
+        EntityID id() const { return m_id; }
+        EntityTypeID type() const { return m_type; }
+    protected:
+        EntityID m_id;
+        EntityTypeID m_type;
     };
 
     template<class T >
-    class EntityContainer : public IContainer {
+    class EntityContainer : public AbstractContainer {
     public:
-        EntityContainer( T type ) : m_type( type ) {}
-        T& get() { return m_type; }
+        EntityContainer( T entity )
+                : m_entity( entity ) {
+            m_type = T::ENTITY_TYPE_ID;
+        }
+        T& get() { return m_entity; }
     private:
-        T m_type;
+        T m_entity;
     };
 
 public:
@@ -33,32 +38,36 @@ public:
     ~EntityManager() = default;
 
     template<class T, class... ARGS>
-    unsigned int create( ARGS&&... args ) {
-        unsigned int id = m_entities.size();
-        IContainer* container = new EntityContainer< T >( T( std::forward<ARGS>(args)... ) );
-        container->m_id = id;
-        m_entities[id] = container;
+    EntityID create( ARGS&&... args ) {
+        AbstractContainer* container = new EntityContainer< T >( T( std::forward<ARGS>(args)... ) );
+        EntityID id = acquire( container );
         return id;
     }
 
     template< typename T >
-    void destroy( unsigned int id ) {
-        auto iter = m_entities.find( id );
-        CNC_ASSERT( iter != m_entities.end() );
-        delete m_entities[ id ];
-        m_entities.erase( iter );
+    void destroy( EntityID id ) {
+//        auto iter = m_entities.find( id );
+//        CNC_ASSERT( iter != m_entities.end() );
+//        delete m_entities[ id ];
+//        m_entities.erase( iter );
     }
 
     template< typename T >
-    T* get( unsigned int id ) {
-        auto iter = m_entities.find( id );
-        CNC_ASSERT( iter != m_entities.end() );
-        return &static_cast< EntityContainer< T >* >( iter->second )->get();
+    T* get( EntityID id ) {
+//        auto iter = m_entities.find( id );
+//        CNC_ASSERT( iter != m_entities.end() );
+//        return &static_cast< EntityContainer< T >* >( iter->second )->get();
+        return nullptr;
+    }
+private:
+
+    EntityID acquire( AbstractContainer* container ) {
+        EntityID id = container->type();
+        return id;
     }
 
-
 private:
-    std::unordered_map< unsigned int, IContainer* > m_entities;
+    std::unordered_map< unsigned int, AbstractContainer* > m_entities;
 };
 
 } // namespace concussion

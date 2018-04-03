@@ -8,22 +8,22 @@ namespace concussion {
 namespace internal {
 
 template<class T>
-class FamilyTypeID{
-
-    static TypeID s_count;
+class ObjectTypeID{
 
 public:
-
     template<class U>
-    static const TypeID Get() {
+    static const TypeID get() {
         static const TypeID STATIC_TYPE_ID { s_count++ };
         return STATIC_TYPE_ID;
     }
 
-    static const TypeID Get() {
-        return s_count;
-    }
+private:
+    static TypeID s_count;
+
 };
+
+template<typename T>
+TypeID ObjectTypeID<T>::s_count = 0u;
 
 } // namespace internal
 

@@ -9,17 +9,17 @@ class AbstractSystem;
 namespace internal {
 
 template <>
-TypeID FamilyTypeID<AbstractEntity>::s_count			= 0u;
+TypeID ObjectTypeID<AbstractEntity>::s_count = 0u;
 
 template <>
-TypeID FamilyTypeID<AbstractComponent>::s_count		= 0u;
+TypeID ObjectTypeID<AbstractComponent>::s_count = 0u;
 
 template <>
-TypeID FamilyTypeID<AbstractSystem>::s_count			= 0u;
+TypeID ObjectTypeID<AbstractSystem>::s_count = 0u;
 
-template class FamilyTypeID<AbstractEntity>;
-template class FamilyTypeID<AbstractComponent>;
-template class FamilyTypeID<AbstractSystem>;
+template class ObjectTypeID<AbstractEntity>;
+template class ObjectTypeID<AbstractComponent>;
+template class ObjectTypeID<AbstractSystem>;
 
 } // namespace internal
 

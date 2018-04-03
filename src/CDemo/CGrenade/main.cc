@@ -1,4 +1,5 @@
 #include "Grenade.hh"
+#include "Backpack.hh"
 #include "Application.hh"
 
 #include <CEngine/Log.hh>
@@ -8,8 +9,6 @@
 #include <CEngine/EntityManager.hh>
 
 
-
-//class Player {};
 
 int main( int argc, const char* argv[] ) {
 
@@ -22,9 +21,13 @@ int main( int argc, const char* argv[] ) {
 
     EntityManager manager;
 
-//    EntityID a = manager.create< Grenade >();
-
-    TypeID asd = internal::FamilyTypeID<AbstractEntity>::Get<Grenade>();
+    EntityID a = manager.create< Grenade >();
+    EntityID b = manager.create< Grenade >();
+    EntityID c = manager.create< Grenade >();
+    EntityID d = manager.create< Grenade >();
+    for ( auto i : { a, b, c, d } ) {
+        CNC_ERROR << i;
+    }
 
 //    concussion::EntityManager manager;
 //    int a = manager.create< Player >( "dave" );

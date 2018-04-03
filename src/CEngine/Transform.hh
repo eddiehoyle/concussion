@@ -1,7 +1,9 @@
 #ifndef CONCUSSION_TRANSFORM_HH
 #define CONCUSSION_TRANSFORM_HH
 
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
+#include <glm/ext.hpp>
 
 namespace concussion {
 

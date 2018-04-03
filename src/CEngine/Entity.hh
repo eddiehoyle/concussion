@@ -28,8 +28,8 @@ public:
     {}
 };
 
-//template<class E>
-//const EntityTypeID Entity<E>::ENTITY_TYPE_ID = internal::ObjectTypeID<AbstractEntity>::get<E>();
+template<class E>
+const EntityTypeID Entity<E>::ENTITY_TYPE_ID = internal::ObjectTypeID<AbstractEntity>::get<E>();
 
 } // namespace concussion
 
