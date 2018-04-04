@@ -37,38 +37,95 @@ public:
     EntityManager() = default;
     ~EntityManager() = default;
 
-    template<class T, class... ARGS>
-    EntityID create( ARGS&&... args ) {
-        AbstractContainer* container = new EntityContainer< T >( T( std::forward<ARGS>(args)... ) );
+    /// Create an entity.
+    /// @tparam T Type of entity.
+    /// @tparam Args Entity arguments type.
+    /// @param args Entity arguments
+    /// @return An entity id.
+    template<class T, class... Args>
+    EntityID create( Args&&... args ) {
+        AbstractContainer* container = new EntityContainer< T >( T( std::forward<Args>(args)... ) );
         EntityID id = acquire( container );
         return id;
     }
 
+    /// Destroy an entity.
+    /// @tparam T Type of entity.
+    /// @param id Id of entity.
     template< typename T >
     void destroy( EntityID id ) {
-//        auto iter = m_entities.find( id );
-//        CNC_ASSERT( iter != m_entities.end() );
-//        delete m_entities[ id ];
-//        m_entities.erase( iter );
+        CNC_ASSERT( id < m_containers.size() );
+        EntityContainer< T >* container = get_container< T >( id );
+        CNC_ASSERT( container != nullptr );
+
+        auto type_iter = m_entities.find( container->type() );
+        CNC_ASSERT( type_iter != m_entities.end() );
+        auto id_iter = std::find( type_iter->second.begin(), type_iter->second.end(), container->id() );
+        CNC_ASSERT( id_iter != type_iter->second.end() );
+        type_iter->second.erase( id_iter );
+
+        delete m_containers[ id ];
+        m_containers[ id ] = nullptr;
     }
 
+    /// Get an entity.
+    /// @tparam T The type of entity.
+    /// @param id The id of the entity.
+    /// @return A pointer to the entity for id.
     template< typename T >
     T* get( EntityID id ) {
-//        auto iter = m_entities.find( id );
-//        CNC_ASSERT( iter != m_entities.end() );
-//        return &static_cast< EntityContainer< T >* >( iter->second )->get();
-        return nullptr;
+        CNC_ASSERT( id < m_containers.size() );
+        EntityContainer< T >* container = get_container< T >( id );
+        return container != nullptr ? &container->get() : nullptr;
     }
+
 private:
 
+    /// Acquire an entity id and store the container.
+    /// @param container An entities container.
+    /// @return The entity id for this container.
     EntityID acquire( AbstractContainer* container ) {
-        EntityID id = container->type();
-        return id;
+
+        EntityID entity_id = 0;
+
+        auto container_iter = std::find( m_containers.begin(), m_containers.end(), nullptr );
+        if ( container_iter != m_containers.end() ) {
+            entity_id = static_cast< EntityID >( std::distance( m_containers.begin(), container_iter ) );
+        } else {
+            entity_id = m_containers.size();
+            m_containers.resize( m_containers.size() + 1 ); // check size here
+        }
+
+        container->m_id = entity_id;
+
+        auto type_iter = m_entities.find( container->type() );
+        if ( type_iter == m_entities.end() ) {
+            m_entities[ container->type() ] = std::vector< EntityID >();
+        }
+
+        m_entities[ container->type() ].push_back( entity_id );
+        m_containers[ container->id() ] = container;
+
+        return entity_id;
+    }
+
+    /// Get the container for entity id.
+    /// @tparam T The type of entity.
+    /// @param id The id of the entity.
+    /// @return The entity container.
+    template< typename T >
+    EntityContainer< T >* get_container( EntityID id ) {
+        return static_cast< EntityContainer< T >* >( m_containers[ id ] );
     }
 
 private:
-    std::unordered_map< unsigned int, AbstractContainer* > m_entities;
-};
+
+    using EntityIDs = std::vector< EntityID >;
+    using EntityIDMap = std::unordered_map< EntityTypeID, EntityIDs >;
+    using Containers = std::vector< AbstractContainer* >;
+
+    EntityIDMap m_entities;
+    Containers m_containers;};
 
 } // namespace concussion
 
