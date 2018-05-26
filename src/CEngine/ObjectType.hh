@@ -2,6 +2,7 @@
 #define CONCUSSION_TYPE_HH
 
 #include "Platform.hh"
+#include "Log.hh"
 
 namespace concussion {
 
@@ -14,6 +15,7 @@ public:
     template<class U>
     static const TypeID get() {
         static const TypeID STATIC_TYPE_ID { s_count++ };
+        CNC_ERROR << "get() : U=" << typeid(U).name() << ", count=" << STATIC_TYPE_ID;
         return STATIC_TYPE_ID;
     }
 
@@ -23,7 +25,7 @@ private:
 };
 
 template<typename T>
-TypeID ObjectTypeID<T>::s_count = 0u;
+concussion::TypeID ObjectTypeID<T>::s_count = 0u;
 
 } // namespace internal
 

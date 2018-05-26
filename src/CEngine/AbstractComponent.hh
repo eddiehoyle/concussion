@@ -2,28 +2,25 @@
 #define CONCUSSION_ABSTRACTCOMPONENT_HH
 
 #include "Platform.hh"
-#include "AbstractEntity.hh"
+#include "Types.hh"
 
 namespace concussion {
-
-using ComponentId		= ObjectID;
-using ComponentTypeId	= TypeID;
 
 class AbstractComponent {
 
     friend class ComponentManager;
 
 protected:
-    unsigned int m_hash;
-    ComponentId  m_id;
-    EntityID m_owner;
+    ComponentID  m_ID;
+    EntityID m_entityID;
 
 public:
     AbstractComponent() = default;
-    virtual ~AbstractComponent() {}
+    virtual ~AbstractComponent() = default;
 
-    ComponentId id() const { return this->m_id; }
-    EntityID owner() const { return this->m_owner; }
+    inline const ComponentID getID() const { return this->m_ID; }
+    inline virtual const ComponentTypeID getTypeID() const = 0;
+    inline const EntityID getEntityID() const { return this->m_entityID; }
 };
 
 } // namespace component

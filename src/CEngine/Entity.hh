@@ -5,10 +5,11 @@
 #include "Assert.hh"
 #include "Platform.hh"
 #include "ObjectType.hh"
+#include "Log.hh"
 
 namespace concussion {
 
-template<class E>
+template< typename E >
 class Entity : public AbstractEntity {
 
 public:
@@ -18,18 +19,16 @@ public:
 public:
 
     virtual const EntityTypeID getTypeID() const override {
-        return ENTITY_TYPE_ID;
+        return this->ENTITY_TYPE_ID;
     }
 
-    Entity()
-    {}
-
-    virtual ~Entity()
-    {}
+    Entity() = default;
+    virtual ~Entity() = default;
 };
 
-template<class E>
-const EntityTypeID Entity<E>::ENTITY_TYPE_ID = internal::ObjectTypeID<AbstractEntity>::get<E>();
+template< typename E >
+const concussion::EntityTypeID Entity<E>::ENTITY_TYPE_ID = concussion::internal::ObjectTypeID<concussion::AbstractEntity>::get<E>();
+
 
 } // namespace concussion
 

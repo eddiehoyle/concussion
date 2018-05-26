@@ -1,12 +1,14 @@
-#ifndef CONCUSSION_MANAGER_HH
-#define CONCUSSION_MANAGER_HH
+#ifndef CONCUSSION_ENTITYMANAGER_HH
+#define CONCUSSION_ENTITYMANAGER_HH
 
+#include "Assert.hh"
+#include "Entity.hh"
+#include "ComponentManager.hh"
+
+#include <memory>
 #include <unordered_map>
-#include <CEngine/Assert.hh>
 
 namespace concussion {
-
-class ComponentManager;
 
 class EntityManager {
 
@@ -44,8 +46,11 @@ public:
     /// @return An entity id.
     template<class T, class... Args>
     EntityID create( Args&&... args ) {
-        AbstractContainer* container = new EntityContainer< T >( T( std::forward<Args>(args)... ) );
+        EntityContainer< T >* container = new EntityContainer< T >( T( std::forward<Args>(args)... ) );
         EntityID id = acquire( container );
+        container->get().m_componentManager = m_componentManager;
+        container->get().m_ID = id;
+        CNC_ERROR << "Created entity: " << (void*)&container->get();
         return id;
     }
 
@@ -57,6 +62,7 @@ public:
         CNC_ASSERT( id < m_containers.size() );
         EntityContainer< T >* container = get_container< T >( id );
         CNC_ASSERT( container != nullptr );
+        CNC_ERROR << "Deleting entity: " << (void*)&container->get();
 
         auto type_iter = m_entities.find( container->type() );
         CNC_ASSERT( type_iter != m_entities.end() );
@@ -125,8 +131,12 @@ private:
     using Containers = std::vector< AbstractContainer* >;
 
     EntityIDMap m_entities;
-    Containers m_containers;};
+    Containers m_containers;
+
+    ComponentManager* m_componentManager;
+
+};
 
 } // namespace concussion
 
-#endif //CONCUSSION_MANAGER_HH
+#endif // CONCUSSION_ENTITYMANAGER_HH

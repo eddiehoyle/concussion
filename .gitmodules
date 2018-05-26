@@ -10,3 +10,6 @@
 [submodule "ext/tinyobjloader"]
 	path = ext/tinyobjloader
 	url = https://github.com/syoyo/tinyobjloader.git
+[submodule "ext/googletest"]
+	path = ext/googletest
+	url = https://github.com/google/googletest.git

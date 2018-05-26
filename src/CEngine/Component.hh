@@ -4,27 +4,30 @@
 #include "AbstractComponent.hh"
 #include "ObjectType.hh"
 #include "Platform.hh"
+#include "Types.hh"
 
 namespace concussion {
-template< class T >
+
+template< typename C >
 class Component : public AbstractComponent {
 
 public:
-
-    static const ComponentTypeId COMPONENT_TYPE_ID;
+    static const ComponentTypeID COMPONENT_TYPE_ID;
 
 public:
 
-    Component()
-    {}
+    Component() = default;
+    virtual ~Component() = default;
 
-    virtual ~Component()
-    {}
+    inline virtual const ComponentTypeID getTypeID() const override {
+        return this->COMPONENT_TYPE_ID;
+    }
 };
 
-//template<class T>
-//const ComponentTypeId Component<T>::COMPONENT_TYPE_ID = internal::ObjectTypeID<AbstractComponent>::get<T>();
+template< typename C >
+const concussion::ComponentTypeID concussion::Component<C>::COMPONENT_TYPE_ID = concussion::internal::ObjectTypeID<concussion::AbstractComponent>::get<C>();
 
 } // namespace concussion
+
 
 #endif //CONCUSSION_COMPONENT_HH

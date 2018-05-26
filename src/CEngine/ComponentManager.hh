@@ -1,10 +1,9 @@
-#ifndef CONCUSSION_MANAGER_HH
-#define CONCUSSION_MANAGER_HH
-
-#include "AbstractComponent.hh"
+#ifndef CONCUSSION_COMPONENTMANAGER_HH
+#define CONCUSSION_COMPONENTMANAGER_HH
 
 #include "Assert.hh"
 #include "Platform.hh"
+#include "AbstractComponent.hh"
 
 
 namespace concussion {
@@ -28,13 +27,14 @@ public:
     ~ComponentManager() = default;
 
     template<class T, class... ARGS>
-    unsigned int add( EntityID id, ARGS&&... args ) {
+    ComponentID add( EntityID entity_id, ARGS&&... args ) {
 //        IContainer* component = new ComponentyContainer< T >( T( std::forward<ARGS>(args)... ) );
 //        if ( m_components.find( entity_id ) == m_components.end() ) {
-//            m_components[ entity_id ] = ComponentMap();
+//            m_components[ entity_id ] = EntityComponentMap();
 //        }
 //        m_components[entity_id][T::component_id] = component;
-//        return component_id;
+        ComponentID component_id;
+        return component_id;
     }
 
     template< typename T >
@@ -51,20 +51,22 @@ public:
     }
 
     template< typename T >
-    T* get( EntityID id ) {
+    T* get( EntityID entity_id ) {
 //        auto entity_iter = m_components.find( entity_id );
 //        CNC_ASSERT( entity_iter != m_components.end() );
 //        auto component_iter = entity_iter->second.find( component_id );
 //        CNC_ASSERT( component_iter != entity_iter->second.end() );
 //        return &static_cast< ComponentyContainer< T >* >( component_iter->second )->get();
+        return nullptr;
     }
 
 private:
-    using EntityComponentMap =  std::vector< std::vector< unsigned int > >;
+//    using EntityComponentMap =  std::vector< std::vector< unsigned int > >;
+    using EntityComponentMap =  std::map< EntityID, std::vector< ComponentID > >;
     EntityComponentMap m_components;
     std::vector< IContainer* > m_lut;
 };
 
 } // namespace concussion
 
-#endif // CONCUSSION_MANAGER_HH
+#endif // CONCUSSION_COMPONENTMANAGER_HH

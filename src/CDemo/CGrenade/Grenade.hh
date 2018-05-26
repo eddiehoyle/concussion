@@ -8,7 +8,7 @@ namespace concussion {
 
 class Grenade : public Entity<Grenade> {
 public:
-    Grenade() {}
+    Grenade();
     virtual ~Grenade() {}
 private:
     TransformComponent* m_transform;

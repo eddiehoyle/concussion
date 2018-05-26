@@ -19,6 +19,7 @@ include_directories(
         ext/glm
         ext/stb
         ext/tinyobjloader
+        ext/googletest
         ${CNC_INCLUDE_DIR})
 
 add_definitions(
