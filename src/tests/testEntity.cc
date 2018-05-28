@@ -17,14 +17,14 @@ TEST( TestEntity, initialise_typeid ) {
     EXPECT_EQ( grenade.getTypeID(), 0 );
 }
 
-TEST( TestEntity, increment_typeid ) {
+TEST( TestEntity, same_typeid ) {
     concussion::Entity< Grenade > grenadeA;
     concussion::Entity< Grenade > grenadeB;
     EXPECT_EQ( grenadeA.getTypeID(), 0 );
     EXPECT_EQ( grenadeB.getTypeID(), 0 );
 }
 
-TEST( TestEntity, different_types_increment_typeid ) {
+TEST( TestEntity, different_typeid ) {
 
     concussion::Entity< Grenade > grenade;
     concussion::Entity< Backpack > backpack;

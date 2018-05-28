@@ -6,39 +6,34 @@
 #include <CEngine/Assert.hh>
 #include <CEngine/Engine.hh>
 #include <CEngine/EntityManager.hh>
+#include <CEngine/event/Event.hh>
+#include <CEngine/event/AbstractEvent.hh>
+#include <CEngine/event/AbstractEventListener.hh>
 
 #include <memory>
+#include <CEngine/event/EventHandler.hh>
+
+
+struct SomeEvent : public concussion::event::Event<SomeEvent>
+{};
+
 
 
 int main( int argc, const char* argv[] ) {
 
     CNC_INITIALISE_LOG();
 
+    concussion::event::EventHandler handler;
+    handler.send<SomeEvent>();
+    handler.dispatch();
+
+
 //    concussion::Application app;
 //    app.run();
 
     using namespace concussion;
 
-    CNCEngine engine;
 
-    EntityManager* manager = engine.getEntityManager();
-
-    EntityID a = manager->create< Grenade >();
-    EntityID b = manager->create< Grenade >();
-    Grenade* ga = manager->get< Grenade >( a );
-    Grenade* gb = manager->get< Grenade >( b );
-    CNC_ASSERT( ga->getID() == a );
-    CNC_ASSERT( gb->getID() == b );
-    CNC_ASSERT( ga != nullptr );
-    CNC_ASSERT( gb != nullptr );
-    CNC_ERROR << "A : typeID=" << ga->getTypeID() << ", ID=" << ga->getID();
-    CNC_ERROR << "B : typeID=" << gb->getTypeID() << ", ID=" << gb->getID();
-    manager->destroy< Grenade >( a );
-    manager->destroy< Grenade >( b );
-    ga = manager->get< Grenade >( a );
-    gb = manager->get< Grenade >( b );
-    CNC_ASSERT( ga == nullptr );
-    CNC_ASSERT( gb == nullptr );
     return 0;
 }
 

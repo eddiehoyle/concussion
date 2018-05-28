@@ -8,14 +8,13 @@ namespace concussion {
 
 namespace internal {
 
-template<class T>
+template< typename T >
 class ObjectTypeID{
 
 public:
-    template<class U>
+    template< typename U >
     static const TypeID get() {
         static const TypeID STATIC_TYPE_ID { s_count++ };
-        CNC_ERROR << "get() : U=" << typeid(U).name() << ", count=" << STATIC_TYPE_ID;
         return STATIC_TYPE_ID;
     }
 

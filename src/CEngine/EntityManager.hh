@@ -49,7 +49,7 @@ public:
         EntityContainer< T >* container = new EntityContainer< T >( T( std::forward<Args>(args)... ) );
         EntityID id = acquire( container );
         container->get().m_componentManager = m_componentManager;
-        container->get().m_ID = id;
+        container->get().m_id = id;
         CNC_ERROR << "Created entity: " << (void*)&container->get();
         return id;
     }
