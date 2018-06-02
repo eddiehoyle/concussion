@@ -8,6 +8,9 @@ CNCEngine::CNCEngine()
     : m_entityManager( nullptr ),
       m_componentManager( nullptr ),
       m_systemManager( nullptr ) {
+
+    m_eventHandler		= new event::EventHandler();
+
     m_componentManager = new ComponentManager;
     m_entityManager = new EntityManager;
 }
@@ -18,7 +21,7 @@ CNCEngine::~CNCEngine() {
 }
 
 void CNCEngine::update( float tick_ms ) {
-
+    m_eventHandler->dispatch();
 }
 
 EntityManager* CNCEngine::getEntityManager() {

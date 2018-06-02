@@ -2,6 +2,9 @@
 #define CONCUSSION_ABSTRACTEVENTLISTENER_HH
 
 #include "Event.hh"
+#include "../API.hh"
+#include "AbstractEventDelegate.hh"
+#include "EventDelegate.hh"
 
 #include <type_traits>
 #include <functional>
@@ -14,9 +17,15 @@ namespace event {
 ///
 class AbstractEventListener {
 
+private:
+
+    using RegisteredCallbacks = std::list< AbstractEventDelegate * >;
+    RegisteredCallbacks m_registeredCallbacks;
+
 public:
 
     AbstractEventListener() = default;
+
     virtual ~AbstractEventListener() = default;
 
 
@@ -24,11 +33,15 @@ public:
     /// @param E Listen for this event
     /// @param Callback Uhhh
     template< typename C, typename E >
-    void registerEventCallback( void(C::*Callback)(const E* const) ) {
+    void registerEventCallback( void(C::*Callback)( E* ) ) {
+        CNC_ERROR << "Storing event callback of type=" << E::EVENT_TYPE_ID;
+        AbstractEventDelegate *eventDelegate = new EventDelegate< C, E >( static_cast< C* >(this), Callback );
+        m_registeredCallbacks.push_back( eventDelegate );
+        CNC_Engine->subscribeEvent< E >( eventDelegate );
     }
 
     template< typename C, typename E >
-    void unregisterEventCallback( void(C::*Callback)(const E* const) ) {
+    void unregisterEventCallback( void(C::*Callback)( const E *const ) ) {
     }
 };
 

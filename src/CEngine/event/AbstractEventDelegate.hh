@@ -17,9 +17,8 @@ class AbstractEventDelegate {
     virtual void invoke(const AbstractEvent* const e) = 0;
     virtual EventDelegateID getDelegateId() const = 0;
     virtual EventDelegateTypeID getStaticEventTypeId() const = 0;
-    virtual bool operator==(const AbstractEventDelegate* other) const = 0;
+    virtual bool operator==( AbstractEventDelegate* other) const = 0;
     virtual AbstractEventDelegate* clone() = 0;
-
 };
 
 }

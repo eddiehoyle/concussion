@@ -12,20 +12,27 @@
 
 #include <memory>
 #include <CEngine/event/EventHandler.hh>
-
-
-struct SomeEvent : public concussion::event::Event<SomeEvent>
-{};
-
+#include "Events.hh"
+#include <CEngine/API.hh>
 
 
 int main( int argc, const char* argv[] ) {
 
     CNC_INITIALISE_LOG();
 
-    concussion::event::EventHandler handler;
-    handler.send<SomeEvent>();
-    handler.dispatch();
+
+    using namespace concussion;
+
+    initialize();
+
+    Grenade grenade;
+
+    CNC_Engine->sendEvent<KeyDownEvent>( 5 );
+    CNC_Engine->sendEvent<KeyUpEvent>( 3 );
+    CNC_Engine->sendEvent<KeyDownEvent>( 7 );
+    CNC_Engine->update( 1 );
+
+    terminate();
 
 
 //    concussion::Application app;

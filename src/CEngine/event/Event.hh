@@ -2,6 +2,7 @@
 #define CONCUSSION_EVENT_HH
 
 #include "AbstractEvent.hh"
+#include "../ObjectType.hh"
 
 namespace concussion {
 
@@ -12,7 +13,7 @@ class Event : public AbstractEvent {
 
 public:
 
-    static const EventTypeId EVENT_TYPE_ID;
+    static const EventTypeID EVENT_TYPE_ID;
 
 public:
 
@@ -21,8 +22,10 @@ public:
 
 };
 
-template< typename T >
-const concussion::event::EventTypeId concussion::event::Event< T >::EVENT_TYPE_ID { typeid( T ).hash_code() };
+template< typename E >
+//const concussion::event::EventTypeID concussion::event::Event< E >::EVENT_TYPE_ID { typeid( E ).hash_code() };
+const concussion::event::EventTypeID concussion::event::Event< E >::EVENT_TYPE_ID =
+        concussion::internal::ObjectTypeID< concussion::event::AbstractEvent >::get< E >();
 
 }
 

@@ -9,22 +9,24 @@ namespace concussion {
 
 namespace event {
 
-using EventTypeId		= TypeID;
+using EventTypeID		= TypeID;
 using EventTimestamp	= TimeStamp;
 
 class AbstractEvent {
 
 public:
 
-    AbstractEvent( EventTypeId type )
+    AbstractEvent( EventTypeID type )
+            : m_type( type ),
+              m_time()
     {}
 
-    EventTypeId getEventTypeID() const { return this->m_type; }
+    EventTypeID getEventTypeID() const { return this->m_type; }
     EventTimestamp getTimeCreated() const { return this->m_time; }
 
 protected:
 
-    EventTypeId m_type;
+    EventTypeID m_type;
     EventTimestamp m_time;
 
 };

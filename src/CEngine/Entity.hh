@@ -27,9 +27,8 @@ public:
 };
 
 template< typename E >
-const concussion::EntityTypeID Entity<E>::ENTITY_TYPE_ID = concussion::internal::ObjectTypeID<concussion::AbstractEntity>::get<E>();
-
-
+const concussion::EntityTypeID Entity<E>::ENTITY_TYPE_ID =
+        concussion::internal::ObjectTypeID<concussion::AbstractEntity>::get<E>();
 } // namespace concussion
 
 #endif // CONCUSSION_ENTITY_HH
