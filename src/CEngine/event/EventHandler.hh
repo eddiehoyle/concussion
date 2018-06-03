@@ -32,26 +32,13 @@ public:
         CNC_ERROR << "Adding event callback with ID=" << eventTypeID;
 
         if (iter != this->m_eventDispatcherMap.end()) {
-
-            CNC_ERROR << "Dispatcher found! Adding callback...";
-
             this->m_eventDispatcherMap[eventTypeID]->addEventCallback(delegate);
-
         } else {
-
-            CNC_ERROR << "No dispatcher found... adding new one.";
-
             std::pair<EventTypeID, AbstractEventDispatcher* > kvp(eventTypeID, new EventDispatcher<E>());
             kvp.second->addEventCallback(delegate);
             this->m_eventDispatcherMap.insert(kvp);
-
-            CNC_ERROR << "dispatcherMap size=" << this->m_eventDispatcherMap.size();
         }
 
-    }
-
-    int getDispatcherCount() {
-        return this->m_eventDispatcherMap.size();
     }
 
     // Remove event callback

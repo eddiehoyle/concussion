@@ -55,8 +55,6 @@ public:
 
     virtual void addEventCallback( AbstractEventDelegate* eventDelegate ) override {
 
-        CNC_ERROR << "Adding event delegate!";
-
         // Check if eventDelegate is in pending 'to be removed' delegates
         // ;
 

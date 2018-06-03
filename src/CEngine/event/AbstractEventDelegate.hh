@@ -14,7 +14,7 @@ using EventDelegateTypeID = TypeID;
 class AbstractEventDelegate {
 
     public:
-    virtual void invoke(const AbstractEvent* const e) = 0;
+    virtual void invoke( AbstractEvent* e ) = 0;
     virtual EventDelegateID getDelegateId() const = 0;
     virtual EventDelegateTypeID getStaticEventTypeId() const = 0;
     virtual bool operator==( AbstractEventDelegate* other) const = 0;

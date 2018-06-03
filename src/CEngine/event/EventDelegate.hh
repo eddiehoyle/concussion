@@ -27,8 +27,8 @@ public:
         return new EventDelegate( this->m_receiver, this->m_callback );
     }
 
-    virtual inline void invoke( const AbstractEvent *const e ) override {
-        ( m_receiver->*m_callback )( reinterpret_cast<const EventType *const>(e) );
+    virtual inline void invoke( AbstractEvent* e ) override {
+        ( m_receiver->*m_callback )( reinterpret_cast<EventType*>(e) );
     }
 
     virtual inline EventDelegateID getDelegateId() const override {

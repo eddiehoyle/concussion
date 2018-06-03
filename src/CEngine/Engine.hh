@@ -31,11 +31,11 @@ class CNCEngine {
 
 private:
 
-    Timer *m_engineTime;
-    EntityManager *m_entityManager;
-    ComponentManager *m_componentManager;
-    SystemManager *m_systemManager;
-    event::EventHandler *m_eventHandler;
+    Timer* CNC_EngineTime;
+    EntityManager *CNC_EntityManager;
+    ComponentManager *CNC_ComponentManager;
+    SystemManager *CNC_SystemManager;
+    event::EventHandler *CNC_EventHandler;
 
     CNCEngine( const CNCEngine& ) = delete;
 
@@ -44,27 +44,20 @@ private:
 public:
 
     CNCEngine();
-
     ~CNCEngine();
-
-    EntityManager *getEntityManager();
-
-    ComponentManager *getComponentManager();
-
-    SystemManager *getSystemManager();
 
     void update( float tick_ms );
 
     template< class E, class... ARGS >
     void sendEvent( ARGS&& ... eventArgs ) {
-        m_eventHandler->send< E >( std::forward< ARGS >( eventArgs )... );
+        CNC_EventHandler->send< E >( std::forward< ARGS >( eventArgs )... );
     }
 
 private:
 
     template< class E >
     inline void subscribeEvent( event::AbstractEventDelegate *eventDelegate ) {
-        m_eventHandler->addEventCallback< E >( eventDelegate );
+        CNC_EventHandler->addEventCallback< E >( eventDelegate );
     }
 };
 

@@ -1,40 +1,31 @@
 #include "Engine.hh"
 #include "ComponentManager.hh"
 #include "EntityManager.hh"
+#include "Timer.hh"
 
 namespace concussion {
 
 CNCEngine::CNCEngine()
-    : m_entityManager( nullptr ),
-      m_componentManager( nullptr ),
-      m_systemManager( nullptr ) {
+        : CNC_EngineTime( nullptr ),
+          CNC_EntityManager( nullptr ),
+          CNC_ComponentManager( nullptr ),
+          CNC_SystemManager( nullptr ) {
 
-    m_eventHandler		= new event::EventHandler();
-
-    m_componentManager = new ComponentManager;
-    m_entityManager = new EntityManager;
+    CNC_EngineTime = new Timer();
+    CNC_EventHandler = new event::EventHandler();
+    CNC_EntityManager = new EntityManager;
+    CNC_ComponentManager = new ComponentManager;
 }
 
 CNCEngine::~CNCEngine() {
-    delete m_entityManager;
-    delete m_componentManager;
+    delete CNC_EngineTime;
+    delete CNC_EventHandler;
+    delete CNC_EntityManager;
+    delete CNC_ComponentManager;
 }
 
 void CNCEngine::update( float tick_ms ) {
-    m_eventHandler->dispatch();
+    CNC_EventHandler->dispatch();
 }
-
-EntityManager* CNCEngine::getEntityManager() {
-    return m_entityManager;
-}
-
-ComponentManager* CNCEngine::getComponentManager() {
-    return m_componentManager;
-}
-
-SystemManager* CNCEngine::getSystemManager() {
-    return m_systemManager;
-}
-
 
 }

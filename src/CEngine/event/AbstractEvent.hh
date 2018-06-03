@@ -16,10 +16,7 @@ class AbstractEvent {
 
 public:
 
-    AbstractEvent( EventTypeID type )
-            : m_type( type ),
-              m_time()
-    {}
+    explicit AbstractEvent( EventTypeID type );
 
     EventTypeID getEventTypeID() const { return this->m_type; }
     EventTimestamp getTimeCreated() const { return this->m_time; }

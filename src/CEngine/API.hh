@@ -1,7 +1,3 @@
-//
-// Created by Eddie Hoyle on 31/05/18.
-//
-
 #ifndef CONCUSSION_API_HH
 #define CONCUSSION_API_HH
 
@@ -12,10 +8,9 @@ namespace concussion {
 class CNCEngine;
 
 extern CNCEngine *CNC_Engine;
+
 void initialize();
 void terminate();
-
-
 
 }
 

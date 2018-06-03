@@ -28,13 +28,11 @@ public:
 
     virtual ~AbstractEventListener() = default;
 
-
     /// @param C This is the callback executed when event E is sent
     /// @param E Listen for this event
     /// @param Callback Uhhh
     template< typename C, typename E >
     void registerEventCallback( void(C::*Callback)( E* ) ) {
-        CNC_ERROR << "Storing event callback of type=" << E::EVENT_TYPE_ID;
         AbstractEventDelegate *eventDelegate = new EventDelegate< C, E >( static_cast< C* >(this), Callback );
         m_registeredCallbacks.push_back( eventDelegate );
         CNC_Engine->subscribeEvent< E >( eventDelegate );
